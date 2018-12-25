@@ -4,7 +4,9 @@
 
 package termui
 
-import "testing"
+import (
+	"testing"
+)
 
 var cmap = map[string]Attribute{
 	"fg":           ColorWhite,

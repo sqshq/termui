@@ -11,8 +11,7 @@ import (
 )
 
 func main() {
-	err := ui.Init()
-	if err != nil {
+	if err := ui.Init(); err != nil {
 		panic(err)
 	}
 	defer ui.Close()

@@ -6,17 +6,19 @@
 
 package main
 
-import ui "github.com/gizak/termui"
+import (
+	ui "github.com/gizak/termui"
+	"github.com/gizak/termui/widgets"
+)
 
 func main() {
-	err := ui.Init()
-	if err != nil {
+	if err := ui.Init(); err != nil {
 		panic(err)
 	}
 	defer ui.Close()
 
 	data := []int{4, 2, 1, 6, 3, 9, 1, 4, 2, 15, 14, 9, 8, 6, 10, 13, 15, 12, 10, 5, 3, 6, 1, 7, 10, 10, 14, 13, 6}
-	spl0 := ui.NewSparkline()
+	spl0 := widgets.NewSparkline()
 	spl0.Data = data[3:]
 	spl0.Title = "Sparkline 0"
 	spl0.LineColor = ui.ColorGreen

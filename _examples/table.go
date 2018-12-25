@@ -6,11 +6,13 @@
 
 package main
 
-import ui "github.com/gizak/termui"
+import (
+	ui "github.com/gizak/termui"
+	"github.com/gizak/termui/widgets"
+)
 
 func main() {
-	err := ui.Init()
-	if err != nil {
+	if err := ui.Init(); err != nil {
 		panic(err)
 	}
 	defer ui.Close()
@@ -21,14 +23,11 @@ func main() {
 		[]string{"2016", "10", "11"},
 	}
 
-	table1 := ui.NewTable()
+	table1 := widgets.NewTable()
 	table1.Rows = rows1
 	table1.FgColor = ui.ColorWhite
 	table1.BgColor = ui.ColorDefault
-	table1.Y = 0
-	table1.X = 0
-	table1.Width = 62
-	table1.Height = 7
+	table1.SetRect(5, 5, 60, 10)
 
 	ui.Render(table1)
 

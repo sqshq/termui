@@ -2,9 +2,11 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package termui
+package widgets
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestPar_NoBorderBackground(t *testing.T) {
 	par := NewPar("a")

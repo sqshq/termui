@@ -2,10 +2,10 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-// +build windows
+// +build !windows
 
-package termui
+package widgets
 
-const VDASH = '|'
-const HDASH = '-'
-const ORIGIN = '+'
+const VDASH = '┊'
+const HDASH = '┈'
+const ORIGIN = '└'

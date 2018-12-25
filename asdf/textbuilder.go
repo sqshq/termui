@@ -2,13 +2,15 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package termui
+package widgets
 
 import (
 	"regexp"
 	"strings"
 
-	"github.com/mitchellh/go-wordwrap"
+	wordwrap "github.com/mitchellh/go-wordwrap"
+
+	. "github.com/gizak/termui"
 )
 
 // TextBuilder is a minimal interface to produce text []Cell using specific syntax (markdown).

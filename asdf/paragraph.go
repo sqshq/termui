@@ -2,31 +2,24 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package termui
+package widgets
 
-// Paragraph displays a paragraph.
-/*
-  par := termui.NewParagraph("Simple Text")
-  par.Height = 3
-  par.Width = 17
-  par.BorderLabel = "Label"
-*/
+import (
+	. "github.com/gizak/termui"
+)
+
 type Paragraph struct {
 	Block
-	Text        string
-	TextFgColor Attribute
-	TextBgColor Attribute
-	WrapLength  int // words wrap limit. Note it may not work properly with multi-width char
+	Text      string
+	TextAttrs AttrPair
 }
 
 // NewParagraph returns a new *Paragraph with given text as its content.
 func NewParagraph(s string) *Paragraph {
 	return &Paragraph{
-		Block:       *NewBlock(),
-		Text:        s,
-		TextFgColor: ThemeAttr("par.text.fg"),
-		TextBgColor: ThemeAttr("par.text.bg"),
-		WrapLength:  0,
+		Block:     *NewBlock(),
+		Text:      s,
+		TextAttrs: Theme.Paragraph.TextAttrs,
 	}
 }
 

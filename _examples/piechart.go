@@ -9,11 +9,11 @@ import (
 	"time"
 
 	ui "github.com/gizak/termui"
+	"github.com/gizak/termui/widgets"
 )
 
 func main() {
-	err := ui.Init()
-	if err != nil {
+	if err := ui.Init(); err != nil {
 		panic(err)
 	}
 	defer ui.Close()
@@ -30,10 +30,9 @@ func main() {
 	}
 	run := true
 
-	pc := ui.NewPieChart()
-	pc.BorderLabel = "Pie Chart"
-	pc.Width = 70
-	pc.Height = 36
+	pc := widgets.NewPieChart()
+	pc.Title = "Pie Chart"
+	pc.SetRect(5, 5, 70, 36)
 	pc.Data = []float64{.25, .25, .25, .25}
 	pc.Offset = -.5 * math.Pi
 	pc.Label = func(i int, v float64) string {
@@ -43,9 +42,9 @@ func main() {
 	pause := func() {
 		run = !run
 		if run {
-			pc.BorderLabel = "Pie Chart"
+			pc.Title = "Pie Chart"
 		} else {
-			pc.BorderLabel = "Pie Chart (Stopped)"
+			pc.Title = "Pie Chart (Stopped)"
 		}
 		ui.Render(pc)
 	}

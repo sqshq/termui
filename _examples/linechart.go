@@ -10,59 +10,52 @@ import (
 	"math"
 
 	ui "github.com/gizak/termui"
+	"github.com/gizak/termui/widgets"
 )
 
 func main() {
-	err := ui.Init()
-	if err != nil {
+	if err := ui.Init(); err != nil {
 		panic(err)
 	}
 	defer ui.Close()
 
-	sinps := (func() map[string][]float64 {
+	sinps := (func() [][]float64 {
 		n := 220
-		ps := make(map[string][]float64)
-		ps["first"] = make([]float64, n)
-		ps["second"] = make([]float64, n)
+		ps := make([][]float64, 2)
+		ps[0] = make([]float64, n)
+		ps[1] = make([]float64, n)
 		for i := 0; i < n; i++ {
-			ps["first"][i] = 1 + math.Sin(float64(i)/5)
-			ps["second"][i] = 1 + math.Cos(float64(i)/5)
+			ps[0][i] = 1 + math.Sin(float64(i)/5)
+			ps[1][i] = 1 + math.Cos(float64(i)/5)
 		}
 		return ps
 	})()
 
-	lc0 := ui.NewLineChart()
-	lc0.BorderLabel = "braille-mode Line Chart"
+	lc0 := widgets.NewLineChart()
+	lc0.Title = "braille-mode Line Chart"
 	lc0.Data = sinps
-	lc0.Width = 50
-	lc0.Height = 12
-	lc0.X = 0
-	lc0.Y = 0
+	lc0.SetRect(0, 0, 50, 12)
 	lc0.AxesColor = ui.ColorWhite
-	lc0.LineColor["first"] = ui.ColorGreen | ui.AttrBold
+	lc0.LineColors[0] = ui.ColorGreen | ui.AttrBold
 
-	lc1 := ui.NewLineChart()
-	lc1.BorderLabel = "dot-mode Line Chart"
-	lc1.Mode = "dot"
+	lc1 := widgets.NewLineChart()
+	lc1.Title = "dot-mode Line Chart"
+	lc1.LineType = widgets.Dot
 	lc1.Data = sinps
-	lc1.Width = 26
-	lc1.Height = 12
-	lc1.X = 51
-	lc1.DotStyle = '+'
+	lc1.SetRect(51, 0, 77, 12)
+	lc1.DotChar = '+'
 	lc1.AxesColor = ui.ColorWhite
-	lc1.LineColor["first"] = ui.ColorYellow | ui.AttrBold
+	lc1.LineColors[0] = ui.ColorYellow | ui.AttrBold
 
-	lc2 := ui.NewLineChart()
-	lc2.BorderLabel = "dot-mode Line Chart"
-	lc2.Mode = "dot"
-	lc2.Data["first"] = sinps["first"][4:]
-	lc2.Data["second"] = sinps["second"][4:]
-	lc2.Width = 77
-	lc2.Height = 16
-	lc2.X = 0
-	lc2.Y = 12
+	lc2 := widgets.NewLineChart()
+	lc2.Title = "dot-mode Line Chart"
+	lc2.LineType = widgets.Dot
+	lc2.Data = make([][]float64, 2)
+	lc2.Data[0] = sinps[0][4:]
+	lc2.Data[1] = sinps[1][4:]
+	lc2.SetRect(0, 12, 77, 28)
 	lc2.AxesColor = ui.ColorWhite
-	lc2.LineColor["first"] = ui.ColorCyan | ui.AttrBold
+	lc2.LineColors[0] = ui.ColorCyan | ui.AttrBold
 
 	ui.Render(lc0, lc1, lc2)
 

@@ -2,9 +2,13 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package termui
+package widgets
 
-import "unicode/utf8"
+import (
+	"unicode/utf8"
+
+	. "github.com/gizak/termui"
+)
 
 type Tab struct {
 	Label   string
@@ -109,7 +113,7 @@ func (tp *TabPane) align() {
 	if !tp.fitsWidth() && !tp.Border {
 		tp.PaddingLeft += 1
 		tp.PaddingRight += 1
-		tp.Block.Align()
+		// tp.Block.Align()
 	}
 }
 

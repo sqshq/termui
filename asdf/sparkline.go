@@ -2,7 +2,11 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package termui
+package widgets
+
+import (
+	. "github.com/gizak/termui"
+)
 
 // Sparkline is like: ▅▆▂▂▅▇▂▂▃▆▆▆▅▃. The data points should be non-negative integers.
 /*
@@ -10,53 +14,52 @@ package termui
   spl := termui.NewSparkline()
   spl.Data = data
   spl.Title = "Sparkline 0"
-  spl.LineColor = termui.ColorGreen
 */
 type Sparkline struct {
-	Data          []int
-	Height        int
-	Title         string
-	TitleColor    Attribute
-	LineColor     Attribute
-	displayHeight int
-	scale         float32
-	max           int
+	Data       []int
+	Title      string
+	TitleAttrs AttrPair
+	LineColor  Attribute
+	Max        int
+	Height     int
 }
 
-// Sparklines is a renderable widget which groups together the given sparklines.
+// SparklineGroup is a renderable widget which groups together the given sparklines.
 /*
-  spls := termui.NewSparklines(spl0,spl1,spl2) //...
+  spls := termui.NewSparklineGroup(spl0,spl1,spl2)
   spls.Height = 2
   spls.Width = 20
 */
-type Sparklines struct {
+type SparklineGroup struct {
 	Block
-	Lines        []Sparkline
-	displayLines int
-	displayWidth int
+	Sparklines []Sparkline
 }
 
 var sparks = []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
 
-// Add appends a given Sparkline to s *Sparklines.
-func (s *Sparklines) Add(sl Sparkline) {
-	s.Lines = append(s.Lines, sl)
+// Add appends a given Sparkline to the SparklineGroup
+func (sg *SparklineGroup) Add(sl Sparkline) {
+	sg.Sparklines = append(sg.Sparklines, sl)
 }
 
 // NewSparkline returns a unrenderable single sparkline that intended to be added into Sparklines.
 func NewSparkline() Sparkline {
 	return Sparkline{
-		Height:     1,
-		TitleColor: ThemeAttr("sparkline.title.fg"),
-		LineColor:  ThemeAttr("sparkline.line.fg")}
+		Height:     5,
+		TitleAttrs: Theme.Sparkline.Title,
+		LineColor:  Theme.Sparkline.Line,
+	}
 }
 
 // NewSparklines return a new *Sparklines with given Sparkline(s), you can always add a new Sparkline later.
-func NewSparklines(ss ...Sparkline) *Sparklines {
-	return &Sparklines{Block: *NewBlock(), Lines: ss}
+func NewSparklines(ss ...Sparkline) *SparklineGroup {
+	return &SparklineGroup{
+		Block:      *NewBlock(),
+		Sparklines: ss,
+	}
 }
 
-func (sl *Sparklines) update() {
+func (sl *SparklineGroup) update() {
 	for i, v := range sl.Lines {
 		if v.Title == "" {
 			sl.Lines[i].displayHeight = v.Height
@@ -97,7 +100,7 @@ func (sl *Sparklines) update() {
 }
 
 // Buffer implements Bufferer interface.
-func (sl *Sparklines) Buffer() Buffer {
+func (sl *SparklineGroup) Buffer() Buffer {
 	buf := sl.Block.Buffer()
 	sl.update()
 

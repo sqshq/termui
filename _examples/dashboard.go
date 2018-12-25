@@ -11,16 +11,16 @@ import (
 	"time"
 
 	ui "github.com/gizak/termui"
+	"github.com/gizak/termui/widgets"
 )
 
 func main() {
-	err := ui.Init()
-	if err != nil {
+	if err := ui.Init(); err != nil {
 		panic(err)
 	}
 	defer ui.Close()
 
-	p := ui.NewParagraph("PRESS q TO QUIT DEMO")
+	p := widgets.NewParagraph("PRESS q TO QUIT DEMO")
 	p.Height = 3
 	p.Width = 50
 	p.TextFgColor = ui.ColorWhite

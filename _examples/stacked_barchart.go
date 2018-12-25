@@ -17,17 +17,19 @@ func main() {
 	}
 	defer ui.Close()
 
-	bc := widgets.NewBarChart()
-	bc.Data = []int{3, 2, 5, 3, 9, 3}
-	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
-	bc.Title = "Bar Chart"
-	bc.SetRect(5, 5, 100, 25)
-	bc.BarWidth = 5
-	bc.LabelColors = []ui.Attribute{ui.ColorBlue}
-	bc.BarColors = []ui.Attribute{ui.ColorRed, ui.ColorGreen}
-	bc.NumColors = []ui.Attribute{ui.ColorYellow}
+	sbc := widgets.NewStackedBarChart()
+	sbc.Title = "Student's Marks: X-Axis=Name, Y-Axis=Grade% (Math, English, Science, Computer Science)"
+	sbc.Labels = []string{"Ken", "Rob", "Dennis", "Linus"}
 
-	ui.Render(bc)
+	sbc.Data = make([][]int, 4)
+	sbc.Data[0] = []int{90, 85, 90, 80}
+	sbc.Data[1] = []int{70, 85, 75, 60}
+	sbc.Data[2] = []int{75, 60, 80, 85}
+	sbc.Data[3] = []int{100, 100, 100, 100}
+	sbc.SetRect(5, 5, 100, 30)
+	sbc.BarWidth = 5
+
+	ui.Render(sbc)
 
 	uiEvents := ui.PollEvents()
 	for {

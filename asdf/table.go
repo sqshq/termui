@@ -2,9 +2,13 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package termui
+package widgets
 
-import "strings"
+import (
+	"strings"
+
+	. "github.com/gizak/termui"
+)
 
 /* Table is like:
 
@@ -46,7 +50,7 @@ type Table struct {
 	FgColors  []Attribute
 	BgColors  []Attribute
 	Separator bool
-	TextAlign Align
+	TextAlign Alignment
 }
 
 // NewTable returns a new Table instance
@@ -147,6 +151,7 @@ func (table *Table) CalculatePosition(x int, y int, coordinateX *int, coordinate
 // Buffer ...
 func (table *Table) Buffer() Buffer {
 	buffer := table.Block.Buffer()
+
 	rowCells := table.Analysis()
 	pointerX := table.innerArea.Min.X + 2
 	pointerY := table.innerArea.Min.Y

@@ -41,10 +41,10 @@ func main() {
 
 	// sp := ui.NewSparklines(spark)
 	// sp.Height = 11
-	// sp.BorderLabel = "Sparkline"
+	// sp.Title = "Sparkline"
 
 	// lc := ui.NewLineChart()
-	// lc.BorderLabel = "braille-mode Line Chart"
+	// lc.Title = "braille-mode Line Chart"
 	// lc.Data["default"] = sinps
 	// lc.Height = 11
 	// lc.AxesColor = ui.ColorWhite
@@ -74,7 +74,7 @@ func main() {
 
 	// p := ui.NewParagraph("<> This row has 3 columns\n<- Widgets can be stacked up like left side\n<- Stacked widgets are treated as a single widget")
 	// p.Height = 5
-	// p.BorderLabel = "Demonstration"
+	// p.Title = "Demonstration"
 
 	// ui.Body.Set(
 	// 	ui.NewRow(1/2,

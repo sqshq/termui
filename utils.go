@@ -14,7 +14,7 @@ import (
 type Alignment int
 
 const (
-	AlignLeft OutputMode = iota
+	AlignLeft Alignment = iota
 	AlignCenter
 	AlignRight
 )
@@ -49,14 +49,14 @@ func MinInt(x, y int) int {
 	return y
 }
 
-const dot = "…"
+const DOTS = '…'
 
 func TrimString(s string, w int) string {
 	if w <= 0 {
 		return ""
 	}
 	if rw.StringWidth(s) > w {
-		return rw.Truncate(s, w, dot)
+		return rw.Truncate(s, w, string(DOTS))
 	}
 	return s
 }
@@ -99,4 +99,12 @@ func SumIntSlice(slice []int) int {
 
 func SelectAttr(attrs []Attribute, index int) Attribute {
 	return attrs[index%len(attrs)]
+}
+
+func CellsToString(cells []Cell) string {
+	runes := make([]rune, len(cells))
+	for i, cell := range cells {
+		runes[i] = cell.Rune
+	}
+	return string(runes)
 }

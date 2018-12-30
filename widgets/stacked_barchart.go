@@ -22,10 +22,9 @@ type StackedBarChart struct {
 	Labels      []string
 	BarWidth    int
 	BarGap      int
-	MaxHeight   int
+	MaxVal      int
 }
 
-// NewStackedBarChart returns a new *StackedBarChart with current theme.
 func NewStackedBarChart() *StackedBarChart {
 	return &StackedBarChart{
 		Block:       *NewBlock(),
@@ -38,14 +37,13 @@ func NewStackedBarChart() *StackedBarChart {
 	}
 }
 
-// Buffer implements Bufferer interface.
-func (bc *StackedBarChart) Buffer() Buffer {
-	buf := bc.Block.Buffer()
+func (bc *StackedBarChart) Draw(buf *Buffer) {
+	bc.Block.Draw(buf)
 
-	maxHeight := bc.MaxHeight
-	if maxHeight == 0 {
+	maxVal := bc.MaxVal
+	if maxVal == 0 {
 		for _, data := range bc.Data {
-			maxHeight = MaxInt(maxHeight, SumIntSlice(data))
+			maxVal = MaxInt(maxVal, SumIntSlice(data))
 		}
 	}
 
@@ -56,7 +54,7 @@ func (bc *StackedBarChart) Buffer() Buffer {
 		stackedBarYCoordinate := 0
 		for j, data := range bar {
 			// draw each stacked bar
-			height := int((float64(data) / float64(maxHeight)) * float64(bc.Dy()-3))
+			height := int((float64(data) / float64(maxVal)) * float64(bc.Dy()-3))
 			for x := barXCoordinate; x < MinInt(barXCoordinate+bc.BarWidth, bc.Max.X-1); x++ {
 				for y := (bc.Max.Y - 3) - stackedBarYCoordinate; y > (bc.Max.Y-3)-stackedBarYCoordinate-height; y-- {
 					c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarColors, j)}}
@@ -91,6 +89,4 @@ func (bc *StackedBarChart) Buffer() Buffer {
 
 		barXCoordinate += (bc.BarWidth + bc.BarGap)
 	}
-
-	return buf
 }

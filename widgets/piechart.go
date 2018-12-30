@@ -35,9 +35,8 @@ func NewPieChart() *PieChart {
 	}
 }
 
-// Buffer creates the buffer for the pie chart.
-func (pc *PieChart) Buffer() Buffer {
-	buf := pc.Block.Buffer()
+func (pc *PieChart) Draw(buf *Buffer) {
+	pc.Block.Draw(buf)
 
 	center := pc.Min.Add(pc.Size().Div(2))
 	radius := minFloat64(float64(pc.Dx()/2/xStretch), float64(pc.Dy()/2)) - 1
@@ -58,7 +57,7 @@ func (pc *PieChart) Buffer() Buffer {
 		for j := 0.0; j < size; j += resolutionFactor {
 			borderPoint := borderCircle.at(phi + j)
 			line := line{P1: center, P2: borderPoint}
-			line.draw(&Cell{solidBlock, AttrPair{SelectAttr(pc.Colors, i), ColorDefault}}, &buf)
+			line.draw(&Cell{solidBlock, AttrPair{SelectAttr(pc.Colors, i), ColorDefault}}, buf)
 		}
 		phi += size
 	}
@@ -79,8 +78,6 @@ func (pc *PieChart) Buffer() Buffer {
 			phi += size
 		}
 	}
-
-	return buf
 }
 
 type circle struct {
@@ -114,7 +111,7 @@ func (l line) draw(cell *Cell, buf *Buffer) {
 		return p1.Y <= p2.Y
 	}
 	p1, p2 := l.P1, l.P2
-	buf.SetCell(Cell{'*', cell.Attributes}, l.P2)
+	buf.SetCell(Cell{'*', cell.Attrs}, l.P2)
 	width, height := l.size()
 	if width > height { // paint left to right
 		if !isLeftOf(p1, p2) {

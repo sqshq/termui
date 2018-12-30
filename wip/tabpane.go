@@ -13,7 +13,7 @@ import (
 type Tab struct {
 	Label   string
 	RuneLen int
-	Blocks  []Bufferer
+	Blocks  []Drawable
 }
 
 func NewTab(label string) *Tab {
@@ -22,37 +22,35 @@ func NewTab(label string) *Tab {
 		RuneLen: utf8.RuneCount([]byte(label))}
 }
 
-func (tab *Tab) AddBlocks(rs ...Bufferer) {
-	for _, r := range rs {
-		tab.Blocks = append(tab.Blocks, r)
+func (tab *Tab) AddBlocks(blocks ...Drawable) {
+	for _, block := range blocks {
+		tab.Blocks = append(tab.Blocks, block)
 	}
 }
 
-func (tab *Tab) Buffer() Buffer {
-	buf := NewBuffer()
+func (tab *Tab) Draw(buf *Buffer) {
 	for blockNum := 0; blockNum < len(tab.Blocks); blockNum++ {
 		b := tab.Blocks[blockNum]
-		buf.Merge(b.Buffer())
+		b.Draw(buf)
 	}
-	return buf
 }
 
 type TabPane struct {
 	Block
 	Tabs           []Tab
 	activeTabIndex int
-	ActiveTabBg    Attribute
+	ActiveTabAttrs AttrPair
 	posTabText     []int
 	offTabText     int
 }
 
 func NewTabPane() *TabPane {
-	tp := TabPane{
+	return &TabPane{
 		Block:          *NewBlock(),
 		activeTabIndex: 0,
 		offTabText:     0,
-		ActiveTabBg:    ThemeAttr("bg.tab.active")}
-	return &tp
+		ActiveTabAttrs: Theme.Tab.Active,
+	}
 }
 
 func (tp *TabPane) SetTabs(tabs ...Tab) {
@@ -83,8 +81,8 @@ func (tp *TabPane) SetActiveRight() {
 	}
 	tp.activeTabIndex += 1
 	endOffset := tp.posTabText[tp.activeTabIndex] + tp.Tabs[tp.activeTabIndex].RuneLen
-	if endOffset+tp.offTabText > tp.InnerWidth() {
-		tp.offTabText = endOffset - tp.InnerWidth()
+	if endOffset+tp.offTabText > tp.Dx()-2 {
+		tp.offTabText = endOffset - tp.Dx() - 2
 	}
 }
 
@@ -96,25 +94,17 @@ func (tp *TabPane) SetActiveRight() {
 func (tp *TabPane) checkAlignment() int {
 	ret := 0
 	if tp.offTabText > 0 {
-		ret = -1
+		ret--
 	}
-	if tp.offTabText+tp.InnerWidth() < tp.posTabText[len(tp.Tabs)] {
-		ret += 1
+	if tp.offTabText+(tp.Dx()-2) < tp.posTabText[len(tp.Tabs)] {
+		ret++
 	}
 	return ret
 }
 
 // Checks if all tabs fits innerWidth of TabPane
 func (tp *TabPane) fitsWidth() bool {
-	return tp.InnerWidth() >= tp.posTabText[len(tp.Tabs)]
-}
-
-func (tp *TabPane) align() {
-	if !tp.fitsWidth() && !tp.Border {
-		tp.PaddingLeft += 1
-		tp.PaddingRight += 1
-		// tp.Block.Align()
-	}
+	return tp.Dx()-2 >= tp.posTabText[len(tp.Tabs)]
 }
 
 // bridge the old Point stuct
@@ -129,7 +119,7 @@ type point struct {
 func buf2pt(b Buffer) []point {
 	ps := make([]point, 0, len(b.CellMap))
 	for k, c := range b.CellMap {
-		ps = append(ps, point{X: k.X, Y: k.Y, Ch: c.Ch, Fg: c.Fg, Bg: c.Bg})
+		ps = append(ps, point{X: k.X, Y: k.Y, Ch: c.Rune, Fg: c.Attrs.Fg, Bg: c.Attrs.Bg})
 	}
 
 	return ps
@@ -139,7 +129,7 @@ func buf2pt(b Buffer) []point {
 // Point can be invisible if concatenation of Tab's texts is widther then
 // innerWidth of TabPane
 func (tp *TabPane) addPoint(ptab []point, charOffset *int, oftX *int, points ...point) []point {
-	if *charOffset < tp.offTabText || tp.offTabText+tp.InnerWidth() < *charOffset {
+	if *charOffset < tp.offTabText || tp.offTabText+(tp.Dx()-2) < *charOffset {
 		*charOffset++
 		return ptab
 	}
@@ -169,36 +159,29 @@ func (tp *TabPane) drawPointWithBorder(p point, ch rune, chbord rune, chdown run
 	return append(addp, p)
 }
 
-func (tp *TabPane) Buffer() Buffer {
-	if tp.Border {
-		tp.Height = 3
-	} else {
-		tp.Height = 1
-	}
+func (tp *TabPane) Draw(buf *Buffer) {
 	if tp.Width > tp.posTabText[len(tp.Tabs)]+2 {
 		tp.Width = tp.posTabText[len(tp.Tabs)] + 2
 	}
-	buf := tp.Block.Buffer()
 	ps := []point{}
 
-	tp.align()
-	if tp.InnerHeight() <= 0 || tp.InnerWidth() <= 0 {
-		return NewBuffer()
+	if tp.Dy()-2 <= 0 || tp.Dx()-2 <= 0 {
+		return
 	}
-	oftX := tp.InnerX()
+	oftX := tp.Min.X + 1
 	charOffset := 0
-	pt := point{Bg: tp.BorderBg, Fg: tp.BorderFg}
+	pt := point{Bg: tp.BorderAttrs.Bg, Fg: tp.BorderAttrs.Fg}
 	for i, tab := range tp.Tabs {
 
 		if i != 0 {
 			pt.X = oftX
-			pt.Y = tp.InnerY()
+			pt.Y = tp.Min.Y + 1
 			addp := tp.drawPointWithBorder(pt, ' ', VERTICAL_LINE, HORIZONTAL_DOWN, HORIZONTAL_UP)
 			ps = tp.addPoint(ps, &charOffset, &oftX, addp...)
 		}
 
 		if i == tp.activeTabIndex {
-			pt.Bg = tp.ActiveTabBg
+			pt.Bg = tp.ActiveTabAttrs.Bg
 		}
 		rs := []rune(tab.Label)
 		for k := 0; k < len(rs); k++ {
@@ -260,6 +243,4 @@ func (tp *TabPane) Buffer() Buffer {
 	for _, v := range ps {
 		buf.Set(v.X, v.Y, NewCell(v.Ch, v.Fg, v.Bg))
 	}
-	buf.Sync()
-	return buf
 }

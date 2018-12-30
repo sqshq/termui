@@ -40,8 +40,8 @@ type AttrPair struct {
 
 // Cell represents a terminal cell and is a rune with Fg and Bg Attributes
 type Cell struct {
-	Ch         rune
-	Attributes AttrPair
+	Rune  rune
+	Attrs AttrPair
 }
 
 // Buffer represents a section of a terminal and is a renderable rectangle cell data container.
@@ -50,22 +50,22 @@ type Buffer struct {
 	CellMap map[image.Point]Cell
 }
 
-func NewBuffer(r image.Rectangle) Buffer {
-	return Buffer{
+func NewBuffer(r image.Rectangle) *Buffer {
+	return &Buffer{
 		Rectangle: r,
 		CellMap:   make(map[image.Point]Cell),
 	}
 }
 
-func (b Buffer) GetCell(p image.Point) Cell {
+func (b *Buffer) GetCell(p image.Point) Cell {
 	return b.CellMap[p]
 }
 
-func (b Buffer) SetCell(c Cell, p image.Point) {
+func (b *Buffer) SetCell(c Cell, p image.Point) {
 	b.CellMap[p] = c
 }
 
-func (b Buffer) Fill(c Cell, rect image.Rectangle) {
+func (b *Buffer) Fill(c Cell, rect image.Rectangle) {
 	for x := rect.Min.X; x < rect.Max.X; x++ {
 		for y := rect.Min.Y; y < rect.Max.Y; y++ {
 			b.SetCell(c, image.Pt(x, y))

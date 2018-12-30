@@ -19,7 +19,6 @@ type Gauge struct {
 	Label        string
 }
 
-// NewGauge return a new gauge with current theme.
 func NewGauge() *Gauge {
 	return &Gauge{
 		Block:        *NewBlock(),
@@ -28,9 +27,8 @@ func NewGauge() *Gauge {
 	}
 }
 
-// Buffer implements Bufferer interface.
-func (g *Gauge) Buffer() Buffer {
-	buf := g.Block.Buffer()
+func (g *Gauge) Draw(buf *Buffer) {
+	g.Block.Draw(buf)
 
 	label := g.Label
 	if label == "" {
@@ -39,22 +37,19 @@ func (g *Gauge) Buffer() Buffer {
 
 	// plot bar
 	barWidth := int((float64(g.Percent) / 100) * float64(g.Dx()-2))
-	for x := g.Min.X + 1; x < g.Min.X+barWidth+1; x++ {
-		for y := g.Min.Y + 1; y < g.Max.Y-1; y++ {
-			buf.SetCell(Cell{' ', AttrPair{ColorDefault, g.BarColor}}, image.Pt(x, y))
-		}
-	}
+	buf.Fill(
+		Cell{' ', AttrPair{ColorDefault, g.BarColor}},
+		image.Rect(g.Min.X+1, g.Min.Y+1, g.Min.X+1+barWidth, g.Max.Y-1),
+	)
 
 	// plot label
-	labelXCoordinate := g.Min.X + (g.Dx() / 2) - (len(label) / 2)
-	labelYCoordinate := g.Min.Y + (g.Dy() / 2)
+	labelXCoordinate := (g.Min.X + 1) + ((g.Dx() - 2) / 2) - int(float64(len(label))/2)
+	labelYCoordinate := (g.Min.Y + 1) + ((g.Dy() - 3) / 2)
 	for i, char := range label {
-		attrs := AttrPair{g.PercentColor, g.BarColor}
-		if labelXCoordinate+i < barWidth {
+		attrs := AttrPair{g.PercentColor, ColorDefault}
+		if labelXCoordinate+i < g.Min.X+barWidth {
 			attrs = AttrPair{g.BarColor, AttrReverse}
 		}
 		buf.SetCell(Cell{char, attrs}, image.Pt(labelXCoordinate+i, labelYCoordinate))
 	}
-
-	return buf
 }

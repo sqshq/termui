@@ -25,8 +25,7 @@ func main() {
 
 	table1 := widgets.NewTable()
 	table1.Rows = rows1
-	table1.FgColor = ui.ColorWhite
-	table1.BgColor = ui.ColorDefault
+	table1.TextAttrs = ui.AttrPair{ui.ColorWhite, ui.ColorDefault}
 	table1.SetRect(5, 5, 60, 10)
 
 	ui.Render(table1)
@@ -37,18 +36,12 @@ func main() {
 		[]string{"2016", "11", "11"},
 	}
 
-	table2 := ui.NewTable()
+	table2 := widgets.NewTable()
 	table2.Rows = rows2
-	table2.FgColor = ui.ColorWhite
-	table2.BgColor = ui.ColorDefault
+	table2.TextAttrs = ui.AttrPair{ui.ColorWhite, ui.ColorDefault}
 	table2.TextAlign = ui.AlignCenter
-	table2.Separator = false
-	table2.Analysis()
-	table2.SetSize()
-	table2.BgColors[2] = ui.ColorRed
-	table2.Y = 10
-	table2.X = 0
-	table2.Border = true
+	table2.RowSeparator = false
+	table2.SetRect(0, 10, 20, 20)
 
 	ui.Render(table2)
 

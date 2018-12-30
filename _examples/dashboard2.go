@@ -20,6 +20,7 @@ import (
 	"time"
 
 	ui "github.com/gizak/termui"
+	"github.com/gizak/termui/widgets"
 )
 
 const statFilePath = "/proc/stat"
@@ -211,7 +212,7 @@ func NewCpuTabElems(width int) *CpuTabElems {
 	lc.Height = 12
 	lc.X = 0
 	lc.Mode = "dot"
-	lc.BorderLabel = "CPU"
+	lc.Title = "CPU"
 	return &CpuTabElems{GMap: make(map[string]*ui.Gauge),
 		LChart: lc}
 }
@@ -221,7 +222,7 @@ func (cte *CpuTabElems) AddGauge(key string, Y int, width int) *ui.Gauge {
 	cte.GMap[key].Width = width
 	cte.GMap[key].Height = 3
 	cte.GMap[key].Y = Y
-	cte.GMap[key].BorderLabel = key
+	cte.GMap[key].Title = key
 	cte.GMap[key].Percent = 0 //int(val.user + val.nice + val.system)
 	return cte.GMap[key]
 }
@@ -245,18 +246,14 @@ type MemTabElems struct {
 
 func NewMemTabElems(width int) *MemTabElems {
 	g := ui.NewGauge()
-	g.Width = width
-	g.Height = 3
-	g.Y = 0
+	g.SetRect(0, 0, width, 3)
 
 	sline := ui.NewSparkline()
 	sline.Title = "MEM"
-	sline.Height = 8
+	sline.SetRect(0, 0, 8, 8)
 
 	sls := ui.NewSparklines(sline)
-	sls.Width = width
-	sls.Height = 12
-	sls.Y = 3
+	sls.SetRect(0, 3, width, 15)
 	return &MemTabElems{Gauge: g, SLines: sls}
 }
 
@@ -283,17 +280,15 @@ func main() {
 	termWidth := 70
 
 	header := ui.NewParagraph("Press q to quit, Press h or l to switch tabs")
-	header.Height = 1
-	header.Width = 50
+	header.SetRect(0, 0, 50, 1)
 	header.Border = false
-	header.TextBgColor = ui.ColorBlue
+	header.TextAttrs.Bg = ui.ColorBlue
 
-	tabCpu := ui.NewTab("CPU")
-	tabMem := ui.NewTab("MEM")
+	tabCpu := widgets.NewTab("CPU")
+	tabMem := widgets.NewTab("MEM")
 
-	tabpane := ui.NewTabPane()
-	tabpane.Y = 1
-	tabpane.Width = 30
+	tabpane := widgets.NewTabPane()
+	tabpane.SetRect(0, 1, 30, 30)
 	tabpane.Border = false
 
 	cs, errcs := getCpusStatsMap()

@@ -16,7 +16,7 @@ var renderLock sync.Mutex
 type Drawable interface {
 	GetRect() image.Rectangle
 	SetRect(int, int, int, int)
-	Draw(Buffer)
+	Draw(*Buffer)
 }
 
 func Render(items ...Drawable) {
@@ -28,8 +28,8 @@ func Render(items ...Drawable) {
 				if point.In(buf.Rectangle) {
 					tb.SetCell(
 						point.X, point.Y,
-						cell.Ch,
-						tb.Attribute(cell.Attributes.Fg)+1, tb.Attribute(cell.Attributes.Bg)+1,
+						cell.Rune,
+						tb.Attribute(cell.Attrs.Fg)+1, tb.Attribute(cell.Attrs.Bg)+1,
 					)
 				}
 			}

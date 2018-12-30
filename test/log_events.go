@@ -15,8 +15,7 @@ import (
 // logs all events to the termui window
 // stdout can also be redirected to a file and read with `tail -f`
 func main() {
-	err := ui.Init()
-	if err != nil {
+	if err := ui.Init(); err != nil {
 		panic(err)
 	}
 	defer ui.Close()

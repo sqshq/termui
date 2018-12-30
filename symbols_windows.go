@@ -18,3 +18,7 @@ const HORIZONTAL_DOWN = '+'
 const HORIZONTAL_UP = '+'
 const QUOTA_LEFT = '<'
 const QUOTA_RIGHT = '>'
+
+const VDASH = '|'
+const HDASH = '-'
+const ORIGIN = '+'

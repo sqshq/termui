@@ -9,7 +9,7 @@ import (
 )
 
 // Grid layout
-var Grid *grid
+var Grid grid
 
 type gridItemType int
 
@@ -35,8 +35,8 @@ type grid struct {
 	image.Rectangle
 }
 
-func newGrid(r image.Rectangle) *grid {
-	return &grid{
+func newGrid(r image.Rectangle) grid {
+	return grid{
 		Rectangle: r,
 	}
 }
@@ -144,6 +144,6 @@ func (g *grid) Draw(rect image.Rectangle, buf Buffer) {
 
 		entry.SetRect(x, y, x+w, x+h)
 
-		entry.Draw(buf)
+		entry.Draw(&buf)
 	}
 }

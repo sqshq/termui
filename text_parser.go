@@ -2,31 +2,18 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package widgets
+package termui
 
 import (
-	"regexp"
 	"strings"
 
 	wordwrap "github.com/mitchellh/go-wordwrap"
-
-	. "github.com/gizak/termui"
 )
 
-// TextBuilder is a minimal interface to produce text []Cell using specific syntax (markdown).
-type TextBuilder interface {
-	Build(s string, fg, bg Attribute) []Cell
-}
-
-// DefaultTxBuilder is set to be MarkdownTxBuilder.
-var DefaultTxBuilder = NewMarkdownTxBuilder()
-
-// MarkdownTxBuilder implements TextBuilder interface, using markdown syntax.
-type MarkdownTxBuilder struct {
-	baseFg  Attribute
-	baseBg  Attribute
-	plainTx []rune
-	markers []marker
+type textParser struct {
+	baseAttrs AttrPair
+	plainTx   []rune
+	markers   []marker
 }
 
 type marker struct {
@@ -48,26 +35,21 @@ var colorMap = map[string]Attribute{
 	"magenta": ColorMagenta,
 }
 
-var attrMap = map[string]Attribute{
+var attributeMap = map[string]Attribute{
 	"bold":      AttrBold,
 	"underline": AttrUnderline,
 	"reverse":   AttrReverse,
 }
 
-// Allow users to add/override the string to attribute mapping
+// AddColorMap allows users to add/override the string to attribute mapping
 func AddColorMap(str string, attr Attribute) {
 	colorMap[str] = attr
 }
 
-func rmSpc(s string) string {
-	reg := regexp.MustCompile(`\s+`)
-	return reg.ReplaceAllString(s, "")
-}
-
-// readAttr translates strings like `fg-red,fg-bold,bg-white` to fg and bg Attribute
-func (mtb MarkdownTxBuilder) readAttr(s string) (Attribute, Attribute) {
-	fg := mtb.baseFg
-	bg := mtb.baseBg
+// readAttributes translates strings like `fg-red,fg-bold,bg-white` to fg and bg Attribute
+func (tp *textParser) readAttributes(s string) (Attribute, Attribute) {
+	fg := tp.baseAttrs.Fg
+	bg := tp.baseAttrs.Bg
 
 	updateAttr := func(a Attribute, attrs []string) Attribute {
 		for _, s := range attrs {
@@ -77,7 +59,7 @@ func (mtb MarkdownTxBuilder) readAttr(s string) (Attribute, Attribute) {
 				a |= c      // set clr
 			}
 			// add attrs
-			if c, ok := attrMap[s]; ok {
+			if c, ok := attributeMap[s]; ok {
 				a |= c
 			}
 		}
@@ -104,14 +86,9 @@ func (mtb MarkdownTxBuilder) readAttr(s string) (Attribute, Attribute) {
 	return fg, bg
 }
 
-func (mtb *MarkdownTxBuilder) reset() {
-	mtb.plainTx = []rune{}
-	mtb.markers = []marker{}
-}
-
 // parse streams and parses text into normalized text and render sequence.
-func (mtb *MarkdownTxBuilder) parse(str string) {
-	rs := str2runes(str)
+func (tp *textParser) parse(str string) {
+	rs := []rune(str)
 	normTx := []rune{}
 	square := []rune{}
 	brackt := []rune{}
@@ -143,10 +120,10 @@ func (mtb *MarkdownTxBuilder) parse(str string) {
 		case accBrackt:
 			brackt = append(brackt, r)
 			if ')' == r {
-				fg, bg := mtb.readAttr(string(chop(brackt)))
+				fg, bg := tp.readAttributes(string(chop(brackt)))
 				st := len(normTx)
 				ed := len(normTx) + len(square) - 2
-				mtb.markers = append(mtb.markers, marker{st, ed, fg, bg})
+				tp.markers = append(tp.markers, marker{st, ed, fg, bg})
 				normTx = append(normTx, chop(square)...)
 				reset()
 			} else if i+1 == len(rs) {
@@ -195,15 +172,15 @@ func (mtb *MarkdownTxBuilder) parse(str string) {
 		}
 	}
 
-	mtb.plainTx = normTx
+	tp.plainTx = normTx
 }
 
-func wrapTx(cs []Cell, wl int) []Cell {
+func WrapText(cs []Cell, wl int) []Cell {
 	tmpCell := make([]Cell, len(cs))
 	copy(tmpCell, cs)
 
 	// get the plaintext
-	plain := CellsToStr(cs)
+	plain := CellsToString(cs)
 
 	// wrap
 	plainWrapped := wordwrap.WrapString(plain, uint(wl))
@@ -223,7 +200,7 @@ func wrapTx(cs []Cell, wl int) []Cell {
 				trigger = "stop"
 			} else if plainRune[i] != plainWrappedRune[i] && plainWrappedRune[i] == 10 {
 				trigger = "go"
-				cell := Cell{10, 0, 0}
+				cell := Cell{10, AttrPair{0, 0}}
 				j := i - 0
 
 				// insert a cell into the []Cell in correct position
@@ -259,27 +236,21 @@ func wrapTx(cs []Cell, wl int) []Cell {
 	return finalCell
 }
 
-// Build implements TextBuilder interface.
-func (mtb MarkdownTxBuilder) Build(s string, fg, bg Attribute) []Cell {
-	mtb.baseFg = fg
-	mtb.baseBg = bg
-	mtb.reset()
-	mtb.parse(s)
-	cs := make([]Cell, len(mtb.plainTx))
-	for i := range cs {
-		cs[i] = Cell{Ch: mtb.plainTx[i], Fg: fg, Bg: bg}
+func ParseText(s string, baseAttrs AttrPair) []Cell {
+	tp := textParser{
+		baseAttrs: baseAttrs,
 	}
-	for _, mrk := range mtb.markers {
+	tp.parse(s)
+	cs := make([]Cell, len(tp.plainTx))
+	for i := range cs {
+		cs[i] = Cell{tp.plainTx[i], baseAttrs}
+	}
+	for _, mrk := range tp.markers {
 		for i := mrk.st; i < mrk.ed; i++ {
-			cs[i].Fg = mrk.fg
-			cs[i].Bg = mrk.bg
+			cs[i].Attrs.Fg = mrk.fg
+			cs[i].Attrs.Bg = mrk.bg
 		}
 	}
 
 	return cs
-}
-
-// NewMarkdownTxBuilder returns a TextBuilder employing markdown syntax.
-func NewMarkdownTxBuilder() TextBuilder {
-	return MarkdownTxBuilder{}
 }

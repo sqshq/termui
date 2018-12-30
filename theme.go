@@ -17,15 +17,18 @@ var StandardColors = []Attribute{
 type RootTheme struct {
 	Default AttrPair
 
-	Block           BlockTheme
+	Block BlockTheme
+
 	BarChart        BarChartTheme
+	Gauge           GaugeTheme
+	LineChart       LineChartTheme
+	List            ListTheme
 	Paragraph       ParagraphTheme
 	PieChart        []Attribute
-	List            ListTheme
-	StackedBarChart StackedBarChartTheme
-	Gauge           GaugeTheme
 	Sparkline       SparklineTheme
-	LineChart       LineChartTheme
+	StackedBarChart StackedBarChartTheme
+	Tab             TabTheme
+	Table           TableTheme
 }
 
 type BlockTheme struct {
@@ -39,12 +42,27 @@ type BarChartTheme struct {
 	Labels []Attribute
 }
 
+type GaugeTheme struct {
+	Percent Attribute
+	Bar     Attribute
+}
+
+type LineChartTheme struct {
+	Lines []Attribute
+	Axes  Attribute
+}
+
+type ListTheme struct {
+	Text AttrPair
+}
+
 type ParagraphTheme struct {
 	Text AttrPair
 }
 
-type ListTheme struct {
-	Row AttrPair
+type SparklineTheme struct {
+	Title AttrPair
+	Line  Attribute
 }
 
 type StackedBarChartTheme struct {
@@ -53,19 +71,12 @@ type StackedBarChartTheme struct {
 	Labels []Attribute
 }
 
-type GaugeTheme struct {
-	Percent Attribute
-	Bar     Attribute
+type TabTheme struct {
+	Active AttrPair
 }
 
-type SparklineTheme struct {
-	Title AttrPair
-	Line  Attribute
-}
-
-type LineChartTheme struct {
-	Lines []Attribute
-	Axes  Attribute
+type TableTheme struct {
+	Text AttrPair
 }
 
 var Theme = RootTheme{
@@ -83,13 +94,13 @@ var Theme = RootTheme{
 	},
 
 	Paragraph: ParagraphTheme{
-		Text: AttrPair{1, 1},
+		Text: AttrPair{ColorWhite, -1},
 	},
 
 	PieChart: StandardColors,
 
 	List: ListTheme{
-		Row: AttrPair{1, -1},
+		Text: AttrPair{1, -1},
 	},
 
 	StackedBarChart: StackedBarChartTheme{
@@ -114,5 +125,13 @@ var Theme = RootTheme{
 	LineChart: LineChartTheme{
 		Lines: StandardColors,
 		Axes:  ColorBlue,
+	},
+
+	Table: TableTheme{
+		Text: AttrPair{4, -1},
+	},
+
+	Tab: TabTheme{
+		Active: AttrPair{ColorRed, ColorDefault},
 	},
 }

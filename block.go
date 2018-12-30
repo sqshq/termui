@@ -17,6 +17,7 @@ type Block struct {
 	BorderBottom bool
 
 	image.Rectangle
+	Inner image.Rectangle
 
 	Title      string
 	TitleAttrs AttrPair
@@ -36,7 +37,7 @@ func NewBlock() *Block {
 	}
 }
 
-func (b Block) drawBorder(buf Buffer) {
+func (b *Block) drawBorder(buf *Buffer) {
 	if !b.Border {
 		return
 	}
@@ -73,9 +74,10 @@ func (b Block) drawBorder(buf Buffer) {
 	}
 }
 
-func (b *Block) Draw(buf Buffer) {
+func (b *Block) Draw(buf *Buffer) {
 	b.drawBorder(buf)
 	buf.SetString(b.Title, image.Pt(b.Min.X+2, b.Min.Y), b.TitleAttrs)
+	b.inner = image.Rect(b.Min.X+1, b.Min.Y+1, b.Max.X-1, b.Max.Y-1)
 }
 
 func (b *Block) SetRect(x1, y1, x2, y2 int) {

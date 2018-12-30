@@ -18,11 +18,6 @@ const (
 	row gridItemType = 1
 )
 
-type gridBufferer interface {
-	Bufferer
-	SetRect(int, int, int, int)
-}
-
 // GridItem represents either a Row or Column in a grid and holds sizing information and other GridItems or widgets
 type GridItem struct {
 	Type        gridItemType
@@ -48,7 +43,7 @@ func newGrid(r image.Rectangle) *grid {
 
 // NewCol takes a height percentage and either a widget or a Row or Column
 func NewCol(ratio float64, i ...interface{}) GridItem {
-	_, ok := i[0].(gridBufferer)
+	_, ok := i[0].(Drawable)
 	entry := i[0]
 	if !ok {
 		entry = i
@@ -63,7 +58,7 @@ func NewCol(ratio float64, i ...interface{}) GridItem {
 
 // NewRow takes a width percentage and either a widget or a Row or Column
 func NewRow(ratio float64, i ...interface{}) GridItem {
-	_, ok := i[0].(gridBufferer)
+	_, ok := i[0].(Drawable)
 	entry := i[0]
 	if !ok {
 		entry = i
@@ -135,24 +130,20 @@ func (g *grid) setHelper(item GridItem, parentWidthRatio, parentHeightRatio floa
 	}
 }
 
-func (g *grid) Buffer() Buffer {
-	buf := NewBuffer(g.Rectangle)
-
-	gridWidth := float64(g.Dx())
-	gridHeight := float64(g.Dy())
+func (g *grid) Draw(rect image.Rectangle, buf Buffer) {
+	width := float64(rect.Dx())
+	height := float64(rect.Dy())
 
 	for _, item := range g.Items {
-		entry, _ := item.Entry.(gridBufferer)
+		entry, _ := item.Entry.(Drawable)
 
-		x := int(gridWidth * item.XRatio)
-		y := int(gridHeight * item.YRatio)
-		w := int(gridWidth*item.WidthRatio) - 1
-		h := int(gridHeight*item.HeightRatio) - 1
+		x := int(width * item.XRatio)
+		y := int(height * item.YRatio)
+		w := int(width*item.WidthRatio) - 1
+		h := int(height*item.HeightRatio) - 1
 
-		entry.SetRect(x, y, w, h)
+		entry.SetRect(x, y, x+w, x+h)
 
-		buf.Merge(entry.Buffer())
+		entry.Draw(buf)
 	}
-
-	return buf
 }

@@ -41,18 +41,21 @@ func (b Block) drawBorder(buf Buffer) {
 		return
 	}
 
+	verticalCell := Cell{VERTICAL_LINE, b.BorderAttrs}
+	horizontalCell := Cell{HORIZONTAL_LINE, b.BorderAttrs}
+
 	// draw lines
 	if b.BorderTop {
-		buf.Merge(NewFilledBuffer(HORIZONTAL_LINE, b.BorderAttrs, image.Rect(b.Min.X, b.Min.Y, b.Max.X, b.Min.Y+1)))
+		buf.Fill(horizontalCell, image.Rect(b.Min.X, b.Min.Y, b.Max.X, b.Min.Y+1))
 	}
 	if b.BorderBottom {
-		buf.Merge(NewFilledBuffer(HORIZONTAL_LINE, b.BorderAttrs, image.Rect(b.Min.X, b.Max.Y-1, b.Max.X, b.Max.Y)))
+		buf.Fill(horizontalCell, image.Rect(b.Min.X, b.Max.Y-1, b.Max.X, b.Max.Y))
 	}
 	if b.BorderLeft {
-		buf.Merge(NewFilledBuffer(VERTICAL_LINE, b.BorderAttrs, image.Rect(b.Min.X, b.Min.Y, b.Min.X+1, b.Max.Y)))
+		buf.Fill(verticalCell, image.Rect(b.Min.X, b.Min.Y, b.Min.X+1, b.Max.Y))
 	}
 	if b.BorderRight {
-		buf.Merge(NewFilledBuffer(VERTICAL_LINE, b.BorderAttrs, image.Rect(b.Max.X-1, b.Min.Y, b.Max.X, b.Max.Y)))
+		buf.Fill(verticalCell, image.Rect(b.Max.X-1, b.Min.Y, b.Max.X, b.Max.Y))
 	}
 
 	// draw corners
@@ -70,16 +73,15 @@ func (b Block) drawBorder(buf Buffer) {
 	}
 }
 
-func (b *Block) Buffer() Buffer {
-	buf := NewBuffer(b.Rectangle)
-
+func (b *Block) Draw(buf Buffer) {
 	b.drawBorder(buf)
 	buf.SetString(b.Title, image.Pt(b.Min.X+2, b.Min.Y), b.TitleAttrs)
-
-	return buf
 }
 
-// SetRect implements gridBufferer interface
 func (b *Block) SetRect(x1, y1, x2, y2 int) {
 	b.Rectangle = image.Rect(x1, y1, x2, y2)
+}
+
+func (b *Block) GetRect() image.Rectangle {
+	return b.Rectangle
 }

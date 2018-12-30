@@ -65,29 +65,12 @@ func (b Buffer) SetCell(c Cell, p image.Point) {
 	b.CellMap[p] = c
 }
 
-func (b *Buffer) Merge(other Buffer) {
-	for point, cell := range other.CellMap {
-		b.SetCell(cell, point)
-	}
-	b.Union(other.Rectangle)
-}
-
-func (b Buffer) Fill(c Cell) {
-	for x := b.Min.X; x < b.Max.X; x++ {
-		for y := b.Min.Y; y < b.Max.Y; y++ {
+func (b Buffer) Fill(c Cell, rect image.Rectangle) {
+	for x := rect.Min.X; x < rect.Max.X; x++ {
+		for y := rect.Min.Y; y < rect.Max.Y; y++ {
 			b.SetCell(c, image.Pt(x, y))
 		}
 	}
-}
-
-func NewFilledBuffer(ch rune, pair AttrPair, r image.Rectangle) Buffer {
-	buf := NewBuffer(r)
-	for x := r.Min.X; x < r.Max.X; x++ {
-		for y := r.Min.Y; y < r.Max.Y; y++ {
-			buf.SetCell(Cell{ch, pair}, image.Pt(x, y))
-		}
-	}
-	return buf
 }
 
 func (b *Buffer) SetString(s string, p image.Point, pair AttrPair) {

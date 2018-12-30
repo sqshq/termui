@@ -5,6 +5,7 @@
 package termui
 
 import (
+	"image"
 	"sync"
 
 	tb "github.com/nsf/termbox-go"
@@ -12,18 +13,24 @@ import (
 
 var renderLock sync.Mutex
 
-// Bufferer should be implemented by all renderable components.
-type Bufferer interface {
-	Buffer() Buffer
+type Drawable interface {
+	GetRect() image.Rectangle
+	SetRect(int, int, int, int)
+	Draw(Buffer)
 }
 
-func Render(bs ...Bufferer) {
+func Render(items ...Drawable) {
 	go func() {
-		for _, b := range bs {
-			buf := b.Buffer()
+		for _, item := range items {
+			buf := NewBuffer(item.GetRect())
+			item.Draw(buf)
 			for point, cell := range buf.CellMap {
 				if point.In(buf.Rectangle) {
-					tb.SetCell(point.X, point.Y, cell.Ch, tb.Attribute(cell.Attributes.Fg)+1, tb.Attribute(cell.Attributes.Bg)+1)
+					tb.SetCell(
+						point.X, point.Y,
+						cell.Ch,
+						tb.Attribute(cell.Attributes.Fg)+1, tb.Attribute(cell.Attributes.Bg)+1,
+					)
 				}
 			}
 		}

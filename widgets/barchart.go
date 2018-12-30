@@ -38,9 +38,8 @@ func NewBarChart() *BarChart {
 	}
 }
 
-// Buffer implements Bufferer interface.
-func (bc *BarChart) Buffer() Buffer {
-	buf := bc.Block.Buffer()
+func (bc *BarChart) Draw(buf Buffer) {
+	bc.Block.Draw(buf)
 
 	maxHeight := bc.MaxHeight
 	if maxHeight == 0 {
@@ -82,6 +81,4 @@ func (bc *BarChart) Buffer() Buffer {
 
 		barXCoordinate += (bc.BarWidth + bc.BarGap)
 	}
-
-	return buf
 }

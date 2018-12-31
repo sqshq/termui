@@ -1,12 +1,8 @@
 # termui
 
-[![Build Status](https://travis-ci.org/gizak/termui.svg?branch=master)](https://travis-ci.org/gizak/termui) [![Doc Status](https://godoc.org/github.com/gizak/termui?status.png)](https://godoc.org/github.com/gizak/termui)
-
 <img src="./assets/dashboard1.gif" alt="demo cast under osx 10.10; Terminal.app; Menlo Regular 12pt.)" width="100%">
 
 `termui` is a cross-platform, easy-to-compile, and fully-customizable terminal dashboard built on top of [termbox-go](https://github.com/nsf/termbox-go). It is inspired by [blessed-contrib](https://github.com/yaronn/blessed-contrib) and written purely in Go.
-
-**termui is currently undergoing some API changes so make sure to check the changelog when upgrading**
 
 ## Installation
 
@@ -15,6 +11,10 @@ Installing from the master branch is recommended:
 ```bash
 go get -u github.com/gizak/termui@master
 ```
+
+**Note**:  
+termui is currently undergoing API changes so make sure to check the changelog when upgrading.
+If you upgrade and notice something is missing or don't like a change, revert the upgrade and open an issue.
 
 ## Usage
 
@@ -34,7 +34,8 @@ func main() {
 	}
 	defer ui.Close()
 
-	p := widgets.NewParagraph("Hello World!")
+	p := widgets.NewParagraph()
+	p.Text = "Hello World!"
 	p.SetRect(0, 0, 25, 5)
 
 	ui.Render(p)
@@ -66,12 +67,12 @@ Examples can be found in [\_examples](./_examples). Run each example with `go ru
 
 ## Documentation
 
-- [wiki](https://github.com/gizak/termui/wiki) for general information
-- [godoc](https://godoc.org/github.com/gizak/termui) for API documentation
+- [wiki](https://github.com/gizak/termui/wiki)
 
 ## Uses
 
 - [go-ethereum/monitorcmd](https://github.com/ethereum/go-ethereum/blob/96116758d22ddbff4dbef2050d6b63a7b74502d8/cmd/geth/monitorcmd.go)
+- [cjbassi/gotop](https://github.com/cjbassi/gotop)
 
 ## Related Works
 
@@ -81,4 +82,4 @@ Examples can be found in [\_examples](./_examples). Run each example with `go ru
 
 ## License
 
-This library is under the [MIT License](http://opensource.org/licenses/MIT)
+[MIT](http://opensource.org/licenses/MIT)

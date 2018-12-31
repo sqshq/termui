@@ -14,48 +14,22 @@ type BrailleCanvas struct {
 	image.Rectangle
 }
 
-var braillePatterns = map[[2]int]rune{
-	[2]int{0, 0}: '⣀',
-	[2]int{0, 1}: '⡠',
-	[2]int{0, 2}: '⡐',
-	[2]int{0, 3}: '⡈',
-
-	[2]int{1, 0}: '⢄',
-	[2]int{1, 1}: '⠤',
-	[2]int{1, 2}: '⠔',
-	[2]int{1, 3}: '⠌',
-
-	[2]int{2, 0}: '⢂',
-	[2]int{2, 1}: '⠢',
-	[2]int{2, 2}: '⠒',
-	[2]int{2, 3}: '⠊',
-
-	[2]int{3, 0}: '⢁',
-	[2]int{3, 1}: '⠡',
-	[2]int{3, 2}: '⠑',
-	[2]int{3, 3}: '⠉',
-}
-
-var lSingleBraille = [4]rune{'\u2840', '⠄', '⠂', '⠁'}
-var rSingleBraille = [4]rune{'\u2880', '⠠', '⠐', '⠈'}
-
 // LineChart has two modes: braille(default) and dot.
 // A single braille character is a 2x4 grid of dots, so using braille
 // gives 2x X resolution and 4x Y resolution over dot mode.
 type LineChart struct {
 	Block
-	Data       [][]float64
-	DataLabels []string
-	Scale      float64
-	LineType   LineType
-	DotChar    rune
-	LineColors []Attribute
-	AxesColor  Attribute
-	MaxVal     float64
-	ShowAxes   bool
+	Data          [][]float64
+	DataLabels    []string
+	Scale         int
+	LineType      LineType
+	DotChar       rune
+	LineAttrs     []Attribute
+	AxesAttr      Attribute
+	MaxVal        float64
+	ShowAxes      bool
+	DrawDirection DrawDirection
 }
-
-const DOT = '•'
 
 type LineType int
 
@@ -64,18 +38,56 @@ const (
 	DotLine
 )
 
+type DrawDirection int
+
+const (
+	DrawLeft DrawDirection = iota
+	DrawRight
+)
+
 func NewLineChart() *LineChart {
 	return &LineChart{
-		Block:      *NewBlock(),
-		LineColors: Theme.LineChart.Lines,
-		AxesColor:  Theme.LineChart.Axes,
-		LineType:   BrailleLine,
-		DotChar:    DOT,
+		Block:         *NewBlock(),
+		LineAttrs:     Theme.LineChart.Lines,
+		AxesAttr:      Theme.LineChart.Axes,
+		LineType:      BrailleLine,
+		DotChar:       DOT,
+		Data:          [][]float64{},
+		Scale:         3, // TODO
+		DrawDirection: DrawRight,
 	}
 }
 
 // one cell contains two data points, so capicity is 2x dot mode
 func (lc *LineChart) renderBraille(buf *Buffer) {
+	canvas := NewCanvas()
+	canvas.Rectangle = lc.Inner
+
+	maxVal := lc.MaxVal
+	if maxVal == 0 {
+		maxVal, _ = GetMaxFloat64From2dSlice(lc.Data)
+	}
+
+	for i, line := range lc.Data {
+		previousHeight := int((line[1] / maxVal) * float64(lc.Inner.Dy()-1))
+		for j, val := range line[1:] {
+			height := int((val / maxVal) * float64(lc.Inner.Dy()-1))
+			canvas.Line(
+				image.Pt(
+					(lc.Inner.Min.X+(j*lc.Scale))*2,
+					(lc.Inner.Max.Y-previousHeight-1)*4,
+				),
+				image.Pt(
+					(lc.Inner.Min.X+((j+1)*lc.Scale))*2,
+					(lc.Inner.Max.Y-height-1)*4,
+				),
+				SelectAttr(lc.LineAttrs, i),
+			)
+			previousHeight = height
+		}
+	}
+
+	canvas.Draw(buf)
 }
 
 func (lc *LineChart) renderDot(buf *Buffer) {
@@ -84,13 +96,13 @@ func (lc *LineChart) renderDot(buf *Buffer) {
 		maxVal, _ = GetMaxFloat64From2dSlice(lc.Data)
 	}
 
-	for _, line := range lc.Data {
-		for j := 0; j < len(line) && j < lc.Inner.Dx(); j++ {
+	for i, line := range lc.Data {
+		for j := 0; j < len(line) && j*lc.Scale < lc.Inner.Dx(); j++ {
 			val := line[j]
-			height := int((val / maxVal) * float64(lc.Inner.Dy()))
+			height := int((val / maxVal) * float64(lc.Inner.Dy()-1))
 			buf.SetCell(
-				Cell{lc.DotChar, AttrPair{ColorBlue, ColorDefault}},
-				image.Pt(lc.Inner.Min.X+j, lc.Inner.Max.Y-height-1),
+				Cell{lc.DotChar, AttrPair{SelectAttr(lc.LineAttrs, i), ColorDefault}},
+				image.Pt(lc.Inner.Min.X+(j*lc.Scale), lc.Inner.Max.Y-1-height),
 			)
 		}
 	}

@@ -6,19 +6,25 @@
 
 package termui
 
-const TOP_RIGHT = '┐'
-const VERTICAL_LINE = '│'
-const HORIZONTAL_LINE = '─'
-const TOP_LEFT = '┌'
-const BOTTOM_RIGHT = '┘'
-const BOTTOM_LEFT = '└'
-const VERTICAL_LEFT = '┤'
-const VERTICAL_RIGHT = '├'
-const HORIZONTAL_DOWN = '┬'
-const HORIZONTAL_UP = '┴'
-const QUOTA_LEFT = '«'
-const QUOTA_RIGHT = '»'
+const (
+	TOP_LEFT     = '┌'
+	TOP_RIGHT    = '┐'
+	BOTTOM_LEFT  = '└'
+	BOTTOM_RIGHT = '┘'
 
-const VDASH = '┊'
-const HDASH = '┈'
-const ORIGIN = '└'
+	VERTICAL_LINE   = '│'
+	HORIZONTAL_LINE = '─'
+
+	VERTICAL_LEFT   = '┤'
+	VERTICAL_RIGHT  = '├'
+	HORIZONTAL_UP   = '┴'
+	HORIZONTAL_DOWN = '┬'
+
+	QUOTA_LEFT  = '«'
+	QUOTA_RIGHT = '»'
+
+	VERTICAL_DASH   = '┊'
+	HORIZONTAL_DASH = '┈'
+
+	ORIGIN = '└'
+)

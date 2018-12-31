@@ -6,6 +6,7 @@ package termui
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 
 	rw "github.com/mattn/go-runewidth"
@@ -48,8 +49,6 @@ func MinInt(x, y int) int {
 	}
 	return y
 }
-
-const DOTS = '…'
 
 func TrimString(s string, w int) string {
 	if w <= 0 {
@@ -107,4 +106,30 @@ func CellsToString(cells []Cell) string {
 		runes[i] = cell.Rune
 	}
 	return string(runes)
+}
+
+func RoundFloat64(x float64) float64 {
+	return math.Floor(x + 0.5)
+}
+
+func SumSliceFloat64(data []float64) float64 {
+	sum := 0.0
+	for _, v := range data {
+		sum += v
+	}
+	return sum
+}
+
+func AbsInt(x int) int {
+	if x >= 0 {
+		return x
+	}
+	return -x
+}
+
+func MinFloat64(x, y float64) float64 {
+	if x < y {
+		return x
+	}
+	return y
 }

@@ -9,10 +9,9 @@ import (
 
 const (
 	piechartOffsetUp = -.5 * math.Pi // the northward angle
-	resolutionFactor = .001          // circle resolution: precision vs. performance
+	resolutionFactor = .0001         // circle resolution: precision vs. performance
 	fullCircle       = 2.0 * math.Pi // the full circle angle
 	xStretch         = 2.0           // horizontal adjustment
-	solidBlock       = '░'
 )
 
 // PieChartLabel callback
@@ -21,7 +20,7 @@ type PieChartLabel func(dataIndex int, currentValue float64) string
 type PieChart struct {
 	Block
 	Data   []float64     // list of data items
-	Colors []Attribute   // colors to by cycled through (see defaultColors)
+	Attrs  []Attribute   // colors to by cycled through
 	Label  PieChartLabel // callback function for labels
 	Offset float64       // which angle to start drawing at? (see piechartOffsetUp)
 }
@@ -30,7 +29,7 @@ type PieChart struct {
 func NewPieChart() *PieChart {
 	return &PieChart{
 		Block:  *NewBlock(),
-		Colors: Theme.PieChart,
+		Attrs:  Theme.PieChart.Slices,
 		Offset: piechartOffsetUp,
 	}
 }
@@ -39,10 +38,10 @@ func (pc *PieChart) Draw(buf *Buffer) {
 	pc.Block.Draw(buf)
 
 	center := pc.Inner.Min.Add(pc.Inner.Size().Div(2))
-	radius := minFloat64(float64(pc.Inner.Dx()/2/xStretch), float64(pc.Inner.Dy()/2))
+	radius := MinFloat64(float64(pc.Inner.Dx()/2/xStretch), float64(pc.Inner.Dy()/2))
 
 	// compute slice sizes
-	sum := sumFloat64(pc.Data)
+	sum := SumSliceFloat64(pc.Data)
 	sliceSizes := make([]float64, len(pc.Data))
 	for i, v := range pc.Data {
 		sliceSizes[i] = v / sum * fullCircle
@@ -57,7 +56,7 @@ func (pc *PieChart) Draw(buf *Buffer) {
 		for j := 0.0; j < size; j += resolutionFactor {
 			borderPoint := borderCircle.at(phi + j)
 			line := line{P1: center, P2: borderPoint}
-			line.draw(&Cell{solidBlock, AttrPair{SelectAttr(pc.Colors, i), ColorDefault}}, buf)
+			line.draw(Cell{SOLID_BLOCK, AttrPair{SelectAttr(pc.Attrs, i), ColorDefault}}, buf)
 		}
 		phi += size
 	}
@@ -73,7 +72,7 @@ func (pc *PieChart) Draw(buf *Buffer) {
 			buf.SetString(
 				pc.Label(i, pc.Data[i]),
 				image.Pt(labelPoint.X, labelPoint.Y),
-				AttrPair{SelectAttr(pc.Colors, i), ColorDefault},
+				AttrPair{SelectAttr(pc.Attrs, i), ColorDefault},
 			)
 			phi += size
 		}
@@ -87,8 +86,8 @@ type circle struct {
 
 // computes the point at a given angle phi
 func (c circle) at(phi float64) image.Point {
-	x := c.X + int(round(xStretch*c.radius*math.Cos(phi)))
-	y := c.Y + int(round(c.radius*math.Sin(phi)))
+	x := c.X + int(RoundFloat64(xStretch*c.radius*math.Cos(phi)))
+	y := c.Y + int(RoundFloat64(c.radius*math.Sin(phi)))
 	return image.Point{X: x, Y: y}
 }
 
@@ -103,7 +102,7 @@ type line struct {
 }
 
 // draws the line
-func (l line) draw(cell *Cell, buf *Buffer) {
+func (l line) draw(cell Cell, buf *Buffer) {
 	isLeftOf := func(p1, p2 image.Point) bool {
 		return p1.X <= p2.X
 	}
@@ -125,7 +124,7 @@ func (l line) draw(cell *Cell, buf *Buffer) {
 			ratio := float64(height) / float64(width)
 			factor := float64(x - p1.X)
 			y := ratio * factor * flip
-			buf.SetCell(*cell, image.Pt(x, int(round(y))+p1.Y))
+			buf.SetCell(cell, image.Pt(x, int(RoundFloat64(y))+p1.Y))
 		}
 	} else { // paint top to bottom
 		if !isTopOf(p1, p2) {
@@ -139,41 +138,12 @@ func (l line) draw(cell *Cell, buf *Buffer) {
 			ratio := float64(width) / float64(height)
 			factor := float64(y - p1.Y)
 			x := ratio * factor * flip
-			buf.SetCell(*cell, image.Pt(int(round(x))+p1.X, y))
+			buf.SetCell(cell, image.Pt(int(RoundFloat64(x))+p1.X, y))
 		}
 	}
 }
 
 // width and height of a line
 func (l line) size() (w, h int) {
-	return absInt(l.P2.X - l.P1.X), absInt(l.P2.Y - l.P1.Y)
-}
-
-// rounds a value
-func round(x float64) float64 {
-	return math.Floor(x + 0.5)
-}
-
-// fold a sum
-func sumFloat64(data []float64) float64 {
-	sum := 0.0
-	for _, v := range data {
-		sum += v
-	}
-	return sum
-}
-
-// math.Abs for ints
-func absInt(x int) int {
-	if x >= 0 {
-		return x
-	}
-	return -x
-}
-
-func minFloat64(x, y float64) float64 {
-	if x < y {
-		return x
-	}
-	return y
+	return AbsInt(l.P2.X - l.P1.X), AbsInt(l.P2.Y - l.P1.Y)
 }

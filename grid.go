@@ -4,19 +4,17 @@
 
 package termui
 
-import (
-	"image"
-)
-
-// Grid layout
-var Grid grid
-
 type gridItemType int
 
 const (
 	col gridItemType = 0
 	row gridItemType = 1
 )
+
+type Grid struct {
+	Block
+	Items []*GridItem
+}
 
 // GridItem represents either a Row or Column in a grid and holds sizing information and other GridItems or widgets
 type GridItem struct {
@@ -30,15 +28,12 @@ type GridItem struct {
 	ratio       float64
 }
 
-type grid struct {
-	Items []*GridItem
-	image.Rectangle
-}
-
-func newGrid(r image.Rectangle) grid {
-	return grid{
-		Rectangle: r,
+func NewGrid() *Grid {
+	g := &Grid{
+		Block: *NewBlock(),
 	}
+	g.Border = false
+	return g
 }
 
 // NewCol takes a height percentage and either a widget or a Row or Column
@@ -72,7 +67,7 @@ func NewRow(ratio float64, i ...interface{}) GridItem {
 }
 
 // Set recursively searches the GridItems, adding leaves to the grid and calculating the dimensions of the leaves.
-func (g *grid) Set(entries ...GridItem) {
+func (g *Grid) Set(entries ...interface{}) {
 	entry := GridItem{
 		Type:   row,
 		Entry:  entries,
@@ -82,13 +77,14 @@ func (g *grid) Set(entries ...GridItem) {
 	g.setHelper(entry, 1.0, 1.0)
 }
 
-func (g *grid) setHelper(item GridItem, parentWidthRatio, parentHeightRatio float64) {
+func (g *Grid) setHelper(item GridItem, parentWidthRatio, parentHeightRatio float64) {
 	var HeightRatio float64
 	var WidthRatio float64
-	if item.Type == col {
+	switch item.Type {
+	case col:
 		HeightRatio = 1.0
 		WidthRatio = item.ratio
-	} else {
+	case row:
 		HeightRatio = item.ratio
 		WidthRatio = 1.0
 	}
@@ -106,18 +102,22 @@ func (g *grid) setHelper(item GridItem, parentWidthRatio, parentHeightRatio floa
 		children := interfaceSlice(item.Entry)
 
 		for i := 0; i < len(children); i++ {
+			if children[i] == nil {
+				continue
+			}
 			child, _ := children[i].(GridItem)
 
-			child.XRatio = item.XRatio + ((1 - item.XRatio) * XRatio)
-			child.YRatio = item.YRatio + ((1 - item.YRatio) * YRatio)
+			child.XRatio = item.XRatio + (item.WidthRatio * XRatio)
+			child.YRatio = item.YRatio + (item.HeightRatio * YRatio)
 
-			if child.Type == col {
+			switch child.Type {
+			case col:
 				cols = true
 				XRatio += child.ratio
 				if rows {
 					item.HeightRatio /= 2
 				}
-			} else {
+			case row:
 				rows = true
 				YRatio += child.ratio
 				if cols {
@@ -130,20 +130,27 @@ func (g *grid) setHelper(item GridItem, parentWidthRatio, parentHeightRatio floa
 	}
 }
 
-func (g *grid) Draw(rect image.Rectangle, buf Buffer) {
-	width := float64(rect.Dx())
-	height := float64(rect.Dy())
+func (g *Grid) Draw(buf *Buffer) {
+	width := float64(g.Dx())
+	height := float64(g.Dy())
 
 	for _, item := range g.Items {
 		entry, _ := item.Entry.(Drawable)
 
 		x := int(width * item.XRatio)
 		y := int(height * item.YRatio)
-		w := int(width*item.WidthRatio) - 1
-		h := int(height*item.HeightRatio) - 1
+		w := int(width * item.WidthRatio)
+		h := int(height * item.HeightRatio)
 
-		entry.SetRect(x, y, x+w, x+h)
+		if x+w > g.Dx() {
+			w--
+		}
+		if y+h > g.Dy() {
+			h--
+		}
 
-		entry.Draw(&buf)
+		entry.SetRect(x, y, x+w, y+h)
+
+		entry.Draw(buf)
 	}
 }

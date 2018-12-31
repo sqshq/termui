@@ -10,6 +10,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"image"
 	"io"
 	"os"
 	"regexp"
@@ -202,26 +203,24 @@ func getMemStats() (ms MemStat, err error) {
 }
 
 type CpuTabElems struct {
-	GMap   map[string]*ui.Gauge
-	LChart *ui.LineChart
+	GMap   map[string]*widgets.Gauge
+	LChart *widgets.LineChart
 }
 
 func NewCpuTabElems(width int) *CpuTabElems {
-	lc := ui.NewLineChart()
-	lc.Width = width
-	lc.Height = 12
-	lc.X = 0
-	lc.Mode = "dot"
+	lc := widgets.NewLineChart()
+	lc.SetRect(0, 0, width, 12)
+	lc.LineType = widgets.DotLine
 	lc.Title = "CPU"
-	return &CpuTabElems{GMap: make(map[string]*ui.Gauge),
-		LChart: lc}
+	return &CpuTabElems{
+		GMap:   make(map[string]*widgets.Gauge),
+		LChart: lc,
+	}
 }
 
-func (cte *CpuTabElems) AddGauge(key string, Y int, width int) *ui.Gauge {
-	cte.GMap[key] = ui.NewGauge()
-	cte.GMap[key].Width = width
-	cte.GMap[key].Height = 3
-	cte.GMap[key].Y = Y
+func (cte *CpuTabElems) AddGauge(key string, Y int, width int) *widgets.Gauge {
+	cte.GMap[key] = widgets.NewGauge()
+	cte.GMap[key].SetRect(0, Y, width, Y+3)
 	cte.GMap[key].Title = key
 	cte.GMap[key].Percent = 0 //int(val.user + val.nice + val.system)
 	return cte.GMap[key]
@@ -232,39 +231,39 @@ func (cte *CpuTabElems) Update(cs CpusStats) {
 		p := int(val.user + val.nice + val.system)
 		cte.GMap[key].Percent = p
 		if key == "cpu" {
-			cte.LChart.Data["default"] = append(cte.LChart.Data["default"], 0)
-			copy(cte.LChart.Data["default"][1:], cte.LChart.Data["default"][0:])
-			cte.LChart.Data["default"][0] = float64(p)
+			cte.LChart.Data = append(cte.LChart.Data, []float64{})
+			cte.LChart.Data[0] = append(cte.LChart.Data[0], 0)
+			copy(cte.LChart.Data[0][1:], cte.LChart.Data[0][0:])
+			cte.LChart.Data[0][0] = float64(p)
 		}
 	}
 }
 
 type MemTabElems struct {
-	Gauge  *ui.Gauge
-	SLines *ui.Sparklines
+	Gauge  *widgets.Gauge
+	SLines *widgets.SparklineGroup
 }
 
 func NewMemTabElems(width int) *MemTabElems {
-	g := ui.NewGauge()
-	g.SetRect(0, 0, width, 3)
+	g := widgets.NewGauge()
+	g.SetRect(0, 5, width, 10)
 
-	sline := ui.NewSparkline()
+	sline := widgets.NewSparkline()
 	sline.Title = "MEM"
-	sline.SetRect(0, 0, 8, 8)
 
-	sls := ui.NewSparklines(sline)
-	sls.SetRect(0, 3, width, 15)
+	sls := widgets.NewSparklineGroup(sline)
+	sls.SetRect(0, 10, width, 25)
 	return &MemTabElems{Gauge: g, SLines: sls}
 }
 
 func (mte *MemTabElems) Update(ms MemStat) {
 	used := int((ms.total - ms.free) * 100 / ms.total)
 	mte.Gauge.Percent = used
-	mte.SLines.Lines[0].Data = append(mte.SLines.Lines[0].Data, 0)
-	copy(mte.SLines.Lines[0].Data[1:], mte.SLines.Lines[0].Data[0:])
-	mte.SLines.Lines[0].Data[0] = used
-	if len(mte.SLines.Lines[0].Data) > mte.SLines.Width-2 {
-		mte.SLines.Lines[0].Data = mte.SLines.Lines[0].Data[0 : mte.SLines.Width-2]
+	mte.SLines.Sparklines[0].Data = append(mte.SLines.Sparklines[0].Data, 0)
+	copy(mte.SLines.Sparklines[0].Data[1:], mte.SLines.Sparklines[0].Data[0:])
+	mte.SLines.Sparklines[0].Data[0] = used
+	if len(mte.SLines.Sparklines[0].Data) > mte.SLines.Dx()-2 {
+		mte.SLines.Sparklines[0].Data = mte.SLines.Sparklines[0].Data[0 : mte.SLines.Dx()-2]
 	}
 }
 
@@ -279,15 +278,18 @@ func main() {
 
 	termWidth := 70
 
-	header := ui.NewParagraph("Press q to quit, Press h or l to switch tabs")
+	header := widgets.NewParagraph()
+	header.Text = "Press q to quit, Press h or l to switch tabs"
 	header.SetRect(0, 0, 50, 1)
 	header.Border = false
 	header.TextAttrs.Bg = ui.ColorBlue
 
-	tabCpu := widgets.NewTab("CPU")
-	tabMem := widgets.NewTab("MEM")
-
-	tabpane := widgets.NewTabPane()
+	tabCpu := ui.NewTab("CPU")
+	tabMem := ui.NewTab("MEM")
+	tabpane := ui.NewTabPane(
+		tabCpu,
+		tabMem,
+	)
 	tabpane.SetRect(0, 1, 30, 30)
 	tabpane.Border = false
 
@@ -300,7 +302,7 @@ func main() {
 
 	cpuTabElems := NewCpuTabElems(termWidth)
 
-	Y := 0
+	Y := 5
 	cpuKeys := make([]string, 0, len(cs))
 	for key := range cs {
 		cpuKeys = append(cpuKeys, key)
@@ -309,10 +311,10 @@ func main() {
 	for _, key := range cpuKeys {
 		g := cpuTabElems.AddGauge(key, Y, termWidth)
 		Y += 3
-		tabCpu.AddBlocks(g)
+		tabCpu.Blocks = append(tabCpu.Blocks, g)
 	}
-	cpuTabElems.LChart.Y = Y
-	tabCpu.AddBlocks(cpuTabElems.LChart)
+	cpuTabElems.LChart.Rectangle = cpuTabElems.LChart.GetRect().Add(image.Pt(0, Y))
+	tabCpu.Blocks = append(tabCpu.Blocks, cpuTabElems.LChart)
 
 	memTabElems := NewMemTabElems(termWidth)
 	ms, errm := getMemStats()
@@ -320,10 +322,8 @@ func main() {
 		panic(errm)
 	}
 	memTabElems.Update(ms)
-	tabMem.AddBlocks(memTabElems.Gauge)
-	tabMem.AddBlocks(memTabElems.SLines)
-
-	tabpane.SetTabs(*tabCpu, *tabMem)
+	tabMem.Blocks = append(tabMem.Blocks, memTabElems.Gauge)
+	tabMem.Blocks = append(tabMem.Blocks, memTabElems.SLines)
 
 	ui.Render(header, tabpane)
 
@@ -337,10 +337,10 @@ func main() {
 			case "q", "<C-c>":
 				return
 			case "h":
-				tabpane.SetActiveLeft()
+				tabpane.FocusLeft()
 				ui.Render(header, tabpane)
 			case "l":
-				tabpane.SetActiveRight()
+				tabpane.FocusRight()
 				ui.Render(header, tabpane)
 			}
 		case <-ticker:

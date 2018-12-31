@@ -24,7 +24,7 @@ type RootTheme struct {
 	LineChart       LineChartTheme
 	List            ListTheme
 	Paragraph       ParagraphTheme
-	PieChart        []Attribute
+	PieChart        PieChartTheme
 	Sparkline       SparklineTheme
 	StackedBarChart StackedBarChartTheme
 	Tab             TabTheme
@@ -60,6 +60,10 @@ type ParagraphTheme struct {
 	Text AttrPair
 }
 
+type PieChartTheme struct {
+	Slices []Attribute
+}
+
 type SparklineTheme struct {
 	Title AttrPair
 	Line  Attribute
@@ -72,7 +76,8 @@ type StackedBarChartTheme struct {
 }
 
 type TabTheme struct {
-	Active AttrPair
+	Active   AttrPair
+	Inactive AttrPair
 }
 
 type TableTheme struct {
@@ -97,7 +102,9 @@ var Theme = RootTheme{
 		Text: AttrPair{ColorWhite, -1},
 	},
 
-	PieChart: StandardColors,
+	PieChart: PieChartTheme{
+		Slices: StandardColors,
+	},
 
 	List: ListTheme{
 		Text: AttrPair{1, -1},
@@ -132,6 +139,7 @@ var Theme = RootTheme{
 	},
 
 	Tab: TabTheme{
-		Active: AttrPair{ColorRed, ColorDefault},
+		Active:   AttrPair{ColorRed, ColorDefault},
+		Inactive: AttrPair{ColorWhite, ColorDefault},
 	},
 }

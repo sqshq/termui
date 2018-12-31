@@ -8,32 +8,33 @@ import (
 	"fmt"
 	"image"
 
-	. "github.com/gizak/termui"
 	rw "github.com/mattn/go-runewidth"
+
+	. "github.com/gizak/termui"
 )
 
 type StackedBarChart struct {
 	Block
-	BarColors   []Attribute
-	LabelColors []Attribute
-	NumColors   []Attribute
-	NumFmt      func(int) string
-	Data        [][]int
-	Labels      []string
-	BarWidth    int
-	BarGap      int
-	MaxVal      int
+	BarAttrs   []Attribute
+	LabelAttrs []Attribute
+	NumAttrs   []Attribute
+	NumFmt     func(int) string
+	Data       [][]int
+	Labels     []string
+	BarWidth   int
+	BarGap     int
+	MaxVal     int
 }
 
 func NewStackedBarChart() *StackedBarChart {
 	return &StackedBarChart{
-		Block:       *NewBlock(),
-		BarColors:   Theme.StackedBarChart.Bars,
-		LabelColors: Theme.StackedBarChart.Labels,
-		NumColors:   Theme.StackedBarChart.Nums,
-		NumFmt:      func(n int) string { return fmt.Sprint(n) },
-		BarGap:      1,
-		BarWidth:    3,
+		Block:      *NewBlock(),
+		BarAttrs:   Theme.StackedBarChart.Bars,
+		LabelAttrs: Theme.StackedBarChart.Labels,
+		NumAttrs:   Theme.StackedBarChart.Nums,
+		NumFmt:     func(n int) string { return fmt.Sprint(n) },
+		BarGap:     1,
+		BarWidth:   3,
 	}
 }
 
@@ -57,7 +58,7 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 			height := int((float64(data) / float64(maxVal)) * float64(bc.Inner.Dy()-1))
 			for x := barXCoordinate; x < MinInt(barXCoordinate+bc.BarWidth, bc.Inner.Max.X); x++ {
 				for y := (bc.Inner.Max.Y - 2) - stackedBarYCoordinate; y > (bc.Inner.Max.Y-2)-stackedBarYCoordinate-height; y-- {
-					c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarColors, j)}}
+					c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarAttrs, j)}}
 					buf.SetCell(c, image.Pt(x, y))
 				}
 			}
@@ -68,8 +69,8 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 				fmt.Sprintf("%d", data),
 				image.Pt(numberXCoordinate, (bc.Inner.Max.Y-2)-stackedBarYCoordinate),
 				AttrPair{
-					SelectAttr(bc.NumColors, j+1),
-					SelectAttr(bc.BarColors, j),
+					SelectAttr(bc.NumAttrs, j+1),
+					SelectAttr(bc.BarAttrs, j),
 				},
 			)
 
@@ -84,7 +85,7 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 		buf.SetString(
 			TrimString(bc.Labels[i], bc.BarWidth),
 			image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
-			AttrPair{SelectAttr(bc.LabelColors, i), ColorDefault},
+			AttrPair{SelectAttr(bc.LabelAttrs, i), ColorDefault},
 		)
 
 		barXCoordinate += (bc.BarWidth + bc.BarGap)

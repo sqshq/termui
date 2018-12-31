@@ -5,8 +5,6 @@
 package termui
 
 import (
-	"image"
-
 	tb "github.com/nsf/termbox-go"
 )
 
@@ -17,9 +15,7 @@ func Init() error {
 		return err
 	}
 	tb.SetInputMode(tb.InputEsc | tb.InputMouse)
-
-	w, h := TerminalSize()
-	Grid = newGrid(image.Rect(0, 0, w, h))
+	tb.SetOutputMode(tb.Output256)
 
 	return nil
 }
@@ -30,37 +26,8 @@ func Close() {
 	tb.Close()
 }
 
-// OutputMode is used for Termbox display modes
-type OutputMode int
-
-// Termbox output modes
-const (
-	OutputCurrent OutputMode = iota
-	OutputNormal
-	Output256
-	Output216
-	OutputGrayscale
-)
-
-func SetOutputMode(mode OutputMode) {
-	switch mode {
-	case OutputCurrent:
-		tb.SetOutputMode(tb.OutputCurrent)
-	case OutputNormal:
-		tb.SetOutputMode(tb.OutputNormal)
-	case Output256:
-		tb.SetOutputMode(tb.Output256)
-	case Output216:
-		tb.SetOutputMode(tb.Output216)
-	case OutputGrayscale:
-		tb.SetOutputMode(tb.OutputGrayscale)
-	}
-}
-
 func TerminalSize() (int, int) {
-	renderLock.Lock()
 	tb.Sync()
 	width, height := tb.Size()
-	renderLock.Unlock()
 	return width, height
 }

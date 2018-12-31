@@ -6,12 +6,9 @@ package termui
 
 import (
 	"image"
-	"sync"
 
 	tb "github.com/nsf/termbox-go"
 )
-
-var renderLock sync.Mutex
 
 type Drawable interface {
 	GetRect() image.Rectangle
@@ -20,26 +17,23 @@ type Drawable interface {
 }
 
 func Render(items ...Drawable) {
-	go func() {
-		for _, item := range items {
-			buf := NewBuffer(item.GetRect())
-			item.Draw(buf)
-			for point, cell := range buf.CellMap {
-				if point.In(buf.Rectangle) {
-					tb.SetCell(
-						point.X, point.Y,
-						cell.Rune,
-						tb.Attribute(cell.Attrs.Fg)+1, tb.Attribute(cell.Attrs.Bg)+1,
-					)
-				}
+	for _, item := range items {
+		buf := NewBuffer(item.GetRect())
+		buf.Fill(Cell{' ', AttrPair{ColorDefault, ColorDefault}}, item.GetRect()) // clears out area
+		item.Draw(buf)
+		for point, cell := range buf.CellMap {
+			if point.In(buf.Rectangle) {
+				tb.SetCell(
+					point.X, point.Y,
+					cell.Rune,
+					tb.Attribute(cell.Attrs.Fg)+1, tb.Attribute(cell.Attrs.Bg)+1,
+				)
 			}
 		}
-		renderLock.Lock()
-		tb.Flush()
-		renderLock.Unlock()
-	}()
+	}
+	tb.Flush()
 }
 
 func Clear() {
-	tb.Clear(tb.ColorDefault, tb.Attribute(tb.Attribute(Theme.Default.Bg))+1)
+	tb.Clear(tb.ColorDefault, tb.Attribute(Theme.Default.Bg+1))
 }

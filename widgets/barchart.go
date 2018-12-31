@@ -8,32 +8,33 @@ import (
 	"fmt"
 	"image"
 
-	. "github.com/gizak/termui"
 	rw "github.com/mattn/go-runewidth"
+
+	. "github.com/gizak/termui"
 )
 
 type BarChart struct {
 	Block
-	BarColors   []Attribute
-	LabelColors []Attribute
-	NumColors   []Attribute
-	NumFmt      func(int) string
-	Data        []int
-	Labels      []string
-	BarWidth    int
-	BarGap      int
-	MaxVal      int
+	BarAttrs   []Attribute
+	LabelAttrs []Attribute
+	NumAttrs   []Attribute
+	NumFmt     func(int) string
+	Data       []int
+	Labels     []string
+	BarWidth   int
+	BarGap     int
+	MaxVal     int
 }
 
 func NewBarChart() *BarChart {
 	return &BarChart{
-		Block:       *NewBlock(),
-		BarColors:   Theme.BarChart.Bars,
-		NumColors:   Theme.BarChart.Nums,
-		LabelColors: Theme.BarChart.Labels,
-		NumFmt:      func(n int) string { return fmt.Sprint(n) },
-		BarGap:      1,
-		BarWidth:    3,
+		Block:      *NewBlock(),
+		BarAttrs:   Theme.BarChart.Bars,
+		NumAttrs:   Theme.BarChart.Nums,
+		LabelAttrs: Theme.BarChart.Labels,
+		NumFmt:     func(n int) string { return fmt.Sprint(n) },
+		BarGap:     1,
+		BarWidth:   3,
 	}
 }
 
@@ -52,7 +53,7 @@ func (bc *BarChart) Draw(buf *Buffer) {
 		height := int((float64(data) / float64(maxVal)) * float64(bc.Inner.Dy()-1))
 		for x := barXCoordinate; x < MinInt(barXCoordinate+bc.BarWidth, bc.Inner.Max.X); x++ {
 			for y := bc.Inner.Max.Y - 2; y > (bc.Inner.Max.Y-2)-height; y-- {
-				c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarColors, i)}}
+				c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarAttrs, i)}}
 				buf.SetCell(c, image.Pt(x, y))
 			}
 		}
@@ -65,20 +66,22 @@ func (bc *BarChart) Draw(buf *Buffer) {
 			buf.SetString(
 				bc.Labels[i],
 				image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
-				AttrPair{SelectAttr(bc.LabelColors, i), ColorDefault},
+				AttrPair{SelectAttr(bc.LabelAttrs, i), ColorDefault},
 			)
 		}
 
 		// draw number
 		numberXCoordinate := barXCoordinate + int((float64(bc.BarWidth) / 2))
-		buf.SetString(
-			fmt.Sprintf("%d", data),
-			image.Pt(numberXCoordinate, bc.Inner.Max.Y-2),
-			AttrPair{
-				SelectAttr(bc.NumColors, i),
-				SelectAttr(bc.BarColors, i),
-			},
-		)
+		if numberXCoordinate <= bc.Inner.Max.X {
+			buf.SetString(
+				fmt.Sprintf("%d", data),
+				image.Pt(numberXCoordinate, bc.Inner.Max.Y-2),
+				AttrPair{
+					SelectAttr(bc.NumAttrs, i+1),
+					SelectAttr(bc.BarAttrs, i),
+				},
+			)
+		}
 
 		barXCoordinate += (bc.BarWidth + bc.BarGap)
 	}

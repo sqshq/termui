@@ -21,7 +21,7 @@ func main() {
 
 	sl0 := widgets.NewSparkline()
 	sl0.Data = data[3:]
-	sl0.LineColor = ui.ColorGreen
+	sl0.LineAttr = ui.ColorGreen
 
 	// single
 	slg0 := widgets.NewSparklineGroup(sl0)
@@ -31,14 +31,13 @@ func main() {
 	sl1 := widgets.NewSparkline()
 	sl1.Title = "Sparkline 1"
 	sl1.Data = data
-	sl1.LineColor = ui.ColorRed
+	sl1.LineAttr = ui.ColorRed
 
 	sl2 := widgets.NewSparkline()
 	sl2.Title = "Sparkline 2"
 	sl2.Data = data[5:]
-	sl2.LineColor = ui.ColorMagenta
+	sl2.LineAttr = ui.ColorMagenta
 
-	// group
 	slg1 := widgets.NewSparklineGroup(sl0, sl1, sl2)
 	slg1.Title = "Group Sparklines"
 	slg1.SetRect(0, 10, 25, 25)
@@ -46,7 +45,7 @@ func main() {
 	sl3 := widgets.NewSparkline()
 	sl3.Title = "Enlarged Sparkline"
 	sl3.Data = data
-	sl3.LineColor = ui.ColorYellow
+	sl3.LineAttr = ui.ColorYellow
 
 	slg2 := widgets.NewSparklineGroup(sl3)
 	slg2.Title = "Tweeked Sparkline"

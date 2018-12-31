@@ -16,10 +16,9 @@ type Paragraph struct {
 	TextAttrs AttrPair
 }
 
-func NewParagraph(s string) *Paragraph {
+func NewParagraph() *Paragraph {
 	return &Paragraph{
 		Block:     *NewBlock(),
-		Text:      s,
 		TextAttrs: Theme.Paragraph.Text,
 	}
 }

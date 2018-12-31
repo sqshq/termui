@@ -38,8 +38,8 @@ func NewPieChart() *PieChart {
 func (pc *PieChart) Draw(buf *Buffer) {
 	pc.Block.Draw(buf)
 
-	center := pc.Min.Add(pc.Size().Div(2))
-	radius := minFloat64(float64(pc.Dx()/2/xStretch), float64(pc.Dy()/2)) - 1
+	center := pc.Inner.Min.Add(pc.Inner.Size().Div(2))
+	radius := minFloat64(float64(pc.Inner.Dx()/2/xStretch), float64(pc.Inner.Dy()/2))
 
 	// compute slice sizes
 	sum := sumFloat64(pc.Data)

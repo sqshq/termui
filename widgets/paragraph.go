@@ -27,12 +27,12 @@ func NewParagraph(s string) *Paragraph {
 func (p *Paragraph) Draw(buf *Buffer) {
 	p.Block.Draw(buf)
 
-	point := p.Min.Add(image.Pt(1, 1))
-	cells := WrapText(ParseText(p.Text, p.TextAttrs), p.Dx()-2)
+	point := p.Inner.Min
+	cells := WrapText(ParseText(p.Text, p.TextAttrs), p.Inner.Dx())
 
-	for i := 0; i < len(cells) && point.Y < p.Max.Y-1; i++ {
+	for i := 0; i < len(cells) && point.Y < p.Inner.Max.Y; i++ {
 		if cells[i].Rune == '\n' {
-			point = image.Pt(p.Min.X+1, point.Y+1)
+			point = image.Pt(p.Inner.Min.X, point.Y+1)
 		} else {
 			buf.SetCell(cells[i], point)
 			point = point.Add(image.Pt(1, 0))

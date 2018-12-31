@@ -44,21 +44,21 @@ func (t *Table) Draw(buf *Buffer) {
 	columnWidths := t.ColumnWidths
 	if len(columnWidths) == 0 {
 		columnCount := len(t.Rows[0])
-		colWidth := (t.Dx() - 2) / columnCount
+		colWidth := t.Inner.Dx() / columnCount
 		for i := 0; i < columnCount; i++ {
 			columnWidths = append(columnWidths, colWidth)
 		}
 	}
 
-	yCoordinate := t.Min.Y + 1
+	yCoordinate := t.Inner.Min.Y
 
-	for i := 0; i < len(t.Rows) && yCoordinate < t.Max.Y-1; i++ {
+	for i := 0; i < len(t.Rows) && yCoordinate < t.Inner.Max.Y; i++ {
 		row := t.Rows[i]
-		xCoordinate := t.Min.X + 1
+		xCoordinate := t.Inner.Min.X
 		for j := 0; j < len(row); j++ {
 			col := ParseText(row[j], t.TextAttrs)
 			for k, cell := range col {
-				if k == columnWidths[j] || xCoordinate+k == t.Max.X-1 {
+				if k == columnWidths[j] || xCoordinate+k == t.Inner.Max.X {
 					cell.Rune = DOTS
 					buf.SetCell(cell, image.Pt(xCoordinate+k-1, yCoordinate))
 					break
@@ -70,7 +70,7 @@ func (t *Table) Draw(buf *Buffer) {
 		}
 
 		// draw vertical separators
-		xCoordinate = t.Min.X + 1
+		xCoordinate = t.Inner.Min.X
 		verticalCell := Cell{VERTICAL_LINE, AttrPair{ColorWhite, ColorDefault}}
 		for j := 0; j < len(columnWidths)-1; j++ {
 			xCoordinate += columnWidths[j]
@@ -82,8 +82,8 @@ func (t *Table) Draw(buf *Buffer) {
 
 		// draw horizontal separator
 		horizontalCell := Cell{HORIZONTAL_LINE, AttrPair{ColorWhite, ColorDefault}}
-		if t.RowSeparator && yCoordinate < t.Max.Y-1 && i != len(t.Rows)-1 {
-			buf.Fill(horizontalCell, image.Rect(t.Min.X+1, yCoordinate, t.Max.X-1, yCoordinate+1))
+		if t.RowSeparator && yCoordinate < t.Inner.Max.Y && i != len(t.Rows)-1 {
+			buf.Fill(horizontalCell, image.Rect(t.Inner.Min.X, yCoordinate, t.Inner.Max.X, yCoordinate+1))
 			yCoordinate++
 		}
 	}

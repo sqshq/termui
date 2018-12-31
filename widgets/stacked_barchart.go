@@ -47,16 +47,16 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 		}
 	}
 
-	barXCoordinate := bc.Min.X + 1
+	barXCoordinate := bc.Inner.Min.X
 
 	for i, bar := range bc.Data {
 		// draw stacked bars
 		stackedBarYCoordinate := 0
 		for j, data := range bar {
 			// draw each stacked bar
-			height := int((float64(data) / float64(maxVal)) * float64(bc.Dy()-3))
-			for x := barXCoordinate; x < MinInt(barXCoordinate+bc.BarWidth, bc.Max.X-1); x++ {
-				for y := (bc.Max.Y - 3) - stackedBarYCoordinate; y > (bc.Max.Y-3)-stackedBarYCoordinate-height; y-- {
+			height := int((float64(data) / float64(maxVal)) * float64(bc.Inner.Dy()-1))
+			for x := barXCoordinate; x < MinInt(barXCoordinate+bc.BarWidth, bc.Inner.Max.X); x++ {
+				for y := (bc.Inner.Max.Y - 2) - stackedBarYCoordinate; y > (bc.Inner.Max.Y-2)-stackedBarYCoordinate-height; y-- {
 					c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarColors, j)}}
 					buf.SetCell(c, image.Pt(x, y))
 				}
@@ -66,7 +66,7 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 			numberXCoordinate := barXCoordinate + int((float64(bc.BarWidth) / 2)) - 1
 			buf.SetString(
 				fmt.Sprintf("%d", data),
-				image.Pt(numberXCoordinate, (bc.Max.Y-3)-stackedBarYCoordinate),
+				image.Pt(numberXCoordinate, (bc.Inner.Max.Y-2)-stackedBarYCoordinate),
 				AttrPair{
 					SelectAttr(bc.NumColors, j+1),
 					SelectAttr(bc.BarColors, j),
@@ -83,7 +83,7 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 		)
 		buf.SetString(
 			TrimString(bc.Labels[i], bc.BarWidth),
-			image.Pt(labelXCoordinate, bc.Max.Y-2),
+			image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
 			AttrPair{SelectAttr(bc.LabelColors, i), ColorDefault},
 		)
 

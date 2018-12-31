@@ -85,12 +85,12 @@ func (lc *LineChart) renderDot(buf *Buffer) {
 	}
 
 	for _, line := range lc.Data {
-		for j := 0; j < len(line) && j < lc.Dx()-2; j++ {
+		for j := 0; j < len(line) && j < lc.Inner.Dx(); j++ {
 			val := line[j]
-			height := int((val / maxVal) * float64(lc.Dy()-2))
+			height := int((val / maxVal) * float64(lc.Inner.Dy()))
 			buf.SetCell(
 				Cell{lc.DotChar, AttrPair{ColorBlue, ColorDefault}},
-				image.Pt(lc.Min.X+j+1, lc.Max.Y-height-2),
+				image.Pt(lc.Inner.Min.X+j, lc.Inner.Max.Y-height-1),
 			)
 		}
 	}

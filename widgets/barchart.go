@@ -45,11 +45,11 @@ func (bc *BarChart) Draw(buf *Buffer) {
 		maxVal, _ = GetMaxIntFromSlice(bc.Data)
 	}
 
-	barXCoordinate := bc.Min.X + 1
+	barXCoordinate := bc.Inner.Min.X
 
 	for i, data := range bc.Data {
 		// draw bar
-		height := int((float64(data) / float64(maxVal)) * float64(bc.Inner.Dy()-2))
+		height := int((float64(data) / float64(maxVal)) * float64(bc.Inner.Dy()-1))
 		for x := barXCoordinate; x < MinInt(barXCoordinate+bc.BarWidth, bc.Inner.Max.X); x++ {
 			for y := bc.Inner.Max.Y - 2; y > (bc.Inner.Max.Y-2)-height; y-- {
 				c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarColors, i)}}

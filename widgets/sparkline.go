@@ -50,14 +50,14 @@ func NewSparklineGroup(sls ...*Sparkline) *SparklineGroup {
 func (slg *SparklineGroup) Draw(buf *Buffer) {
 	slg.Block.Draw(buf)
 
-	sparklineHeight := (slg.Dy() - 2) / len(slg.Sparklines)
+	sparklineHeight := slg.Inner.Dy() / len(slg.Sparklines)
 
 	for i, sl := range slg.Sparklines {
 		heightOffset := (sparklineHeight * (i + 1))
 		barHeight := sparklineHeight
 		if i == len(slg.Sparklines)-1 {
-			heightOffset = slg.Dy() - 2
-			barHeight = (slg.Dy() - 2) - (sparklineHeight * i)
+			heightOffset = slg.Inner.Dy()
+			barHeight = slg.Inner.Dy() - (sparklineHeight * i)
 		}
 		if sl.Title != "" {
 			barHeight--
@@ -69,21 +69,21 @@ func (slg *SparklineGroup) Draw(buf *Buffer) {
 		}
 
 		// draw line
-		for j := 0; j < len(sl.Data) && j < (slg.Dx()-2); j++ {
+		for j := 0; j < len(sl.Data) && j < slg.Inner.Dx(); j++ {
 			data := sl.Data[j]
 			height := int((float64(data) / float64(maxVal)) * float64(barHeight))
 			sparkChar := SparkChars[len(SparkChars)-1]
 			for k := 0; k < height; k++ {
 				buf.SetCell(
 					Cell{sparkChar, AttrPair{sl.LineColor, ColorDefault}},
-					image.Pt(j+slg.Min.X+1, slg.Min.Y+heightOffset-k),
+					image.Pt(j+slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset-k),
 				)
 			}
 			if height == 0 {
 				sparkChar = SparkChars[0]
 				buf.SetCell(
 					Cell{sparkChar, AttrPair{sl.LineColor, ColorDefault}},
-					image.Pt(j+slg.Min.X+1, slg.Min.Y+heightOffset),
+					image.Pt(j+slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset),
 				)
 			}
 		}
@@ -91,8 +91,8 @@ func (slg *SparklineGroup) Draw(buf *Buffer) {
 		if sl.Title != "" {
 			// draw title
 			buf.SetString(
-				TrimString(sl.Title, slg.Dx()-2),
-				image.Pt(slg.Min.X+1, slg.Min.Y+heightOffset-barHeight),
+				TrimString(sl.Title, slg.Inner.Dx()),
+				image.Pt(slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset-barHeight),
 				sl.TitleAttrs,
 			)
 		}

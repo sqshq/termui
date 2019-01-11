@@ -99,7 +99,7 @@ func (g *Grid) setHelper(item GridItem, parentWidthRatio, parentHeightRatio floa
 		cols := false
 		rows := false
 
-		children := interfaceSlice(item.Entry)
+		children := InterfaceSlice(item.Entry)
 
 		for i := 0; i < len(children); i++ {
 			if children[i] == nil {
@@ -131,14 +131,14 @@ func (g *Grid) setHelper(item GridItem, parentWidthRatio, parentHeightRatio floa
 }
 
 func (g *Grid) Draw(buf *Buffer) {
-	width := float64(g.Dx())
-	height := float64(g.Dy())
+	width := float64(g.Dx()) + 1
+	height := float64(g.Dy()) + 1
 
 	for _, item := range g.Items {
 		entry, _ := item.Entry.(Drawable)
 
-		x := int(width * item.XRatio)
-		y := int(height * item.YRatio)
+		x := int(width*item.XRatio) + g.Min.X
+		y := int(height*item.YRatio) + g.Min.Y
 		w := int(width * item.WidthRatio)
 		h := int(height * item.HeightRatio)
 

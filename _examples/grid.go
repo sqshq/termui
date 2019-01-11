@@ -109,6 +109,7 @@ func main() {
 			case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				grid.SetRect(0, 0, payload.Width, payload.Height)
+				ui.Clear()
 				ui.Render(grid)
 			}
 		case <-ticker:

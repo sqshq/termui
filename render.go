@@ -19,7 +19,6 @@ type Drawable interface {
 func Render(items ...Drawable) {
 	for _, item := range items {
 		buf := NewBuffer(item.GetRect())
-		buf.Fill(Cell{' ', AttrPair{ColorDefault, ColorDefault}}, item.GetRect()) // clears out area
 		item.Draw(buf)
 		for point, cell := range buf.CellMap {
 			if point.In(buf.Rectangle) {

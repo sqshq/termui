@@ -2,7 +2,7 @@
 
 <img src="./assets/dashboard1.gif" alt="demo cast under osx 10.10; Terminal.app; Menlo Regular 12pt.)" width="100%">
 
-`termui` is a cross-platform, easy-to-compile, and fully-customizable terminal dashboard built on top of [termbox-go](https://github.com/nsf/termbox-go). It is inspired by [blessed-contrib](https://github.com/yaronn/blessed-contrib) and written purely in Go.
+termui is a cross-platform, easy-to-compile, and fully-customizable terminal dashboard built on top of [termbox-go](https://github.com/nsf/termbox-go). It is inspired by [blessed-contrib](https://github.com/yaronn/blessed-contrib) and written purely in Go.
 
 ## Installation
 
@@ -12,8 +12,7 @@ Installing from the master branch is recommended:
 go get -u github.com/gizak/termui@master
 ```
 
-**Note**:  
-termui is currently undergoing API changes so make sure to check the changelog when upgrading.
+**Note**: termui is currently undergoing API changes so make sure to check the changelog when upgrading.
 If you upgrade and notice something is missing or don't like a change, revert the upgrade and open an issue.
 
 ## Usage
@@ -71,8 +70,8 @@ Examples can be found in [\_examples](./_examples). Run each example with `go ru
 
 ## Uses
 
-- [go-ethereum/monitorcmd](https://github.com/ethereum/go-ethereum/blob/96116758d22ddbff4dbef2050d6b63a7b74502d8/cmd/geth/monitorcmd.go)
 - [cjbassi/gotop](https://github.com/cjbassi/gotop)
+- [go-ethereum/monitorcmd](https://github.com/ethereum/go-ethereum/blob/96116758d22ddbff4dbef2050d6b63a7b74502d8/cmd/geth/monitorcmd.go)
 
 ## Related Works
 

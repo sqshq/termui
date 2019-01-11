@@ -39,9 +39,9 @@ func main() {
 	lc0.LineAttrs[0] = ui.ColorGreen | ui.AttrBold
 
 	lc1 := widgets.NewLineChart()
-	lc1.Title = "dot-mode Line Chart"
+	lc1.Title = "custom Line Chart"
 	lc1.LineType = widgets.DotLine
-	lc1.Data = sinData
+	lc1.Data = [][]float64{[]float64{1, 1, 3, 4, 5}}
 	lc1.SetRect(50, 0, 75, 10)
 	lc1.DotChar = '+'
 	lc1.AxesAttr = ui.ColorWhite

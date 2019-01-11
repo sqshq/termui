@@ -76,7 +76,11 @@ func (b *Block) drawBorder(buf *Buffer) {
 
 func (b *Block) Draw(buf *Buffer) {
 	b.drawBorder(buf)
-	buf.SetString(b.Title, image.Pt(b.Min.X+2, b.Min.Y), b.TitleAttrs)
+	buf.SetString(
+		b.Title,
+		b.TitleAttrs,
+		image.Pt(b.Min.X+2, b.Min.Y),
+	)
 }
 
 func (b *Block) SetRect(x1, y1, x2, y2 int) {

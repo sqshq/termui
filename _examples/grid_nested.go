@@ -17,7 +17,10 @@ func main() {
 	grid.SetRect(0, 0, termWidth, termHeight)
 
 	grid2 := ui.NewGrid()
-	grid2.Set(ui.NewCol(.5, ui.NewBlock()))
+	grid2.Set(
+		ui.NewCol(.5, ui.NewBlock()),
+		ui.NewCol(.5, ui.NewRow(.5, ui.NewBlock())),
+	)
 
 	grid.Set(
 		ui.NewRow(.5, ui.NewBlock()),
@@ -35,6 +38,7 @@ func main() {
 		case "<Resize>":
 			payload := e.Payload.(ui.Resize)
 			grid.SetRect(0, 0, payload.Width, payload.Height)
+			ui.Clear()
 			ui.Render(grid)
 		}
 	}

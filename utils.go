@@ -12,16 +12,8 @@ import (
 	rw "github.com/mattn/go-runewidth"
 )
 
-type Alignment int
-
-const (
-	AlignLeft Alignment = iota
-	AlignCenter
-	AlignRight
-)
-
 // https://stackoverflow.com/questions/12753805/type-converting-slices-of-interfaces-in-go
-func interfaceSlice(slice interface{}) []interface{} {
+func InterfaceSlice(slice interface{}) []interface{} {
 	s := reflect.ValueOf(slice)
 	if s.Kind() != reflect.Slice {
 		panic("InterfaceSlice() given a non-slice type")

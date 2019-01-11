@@ -25,6 +25,4 @@ const (
 
 	VERTICAL_DASH   = '┊'
 	HORIZONTAL_DASH = '┈'
-
-	ORIGIN = '└'
 )

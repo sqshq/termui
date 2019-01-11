@@ -71,8 +71,8 @@ func (pc *PieChart) Draw(buf *Buffer) {
 			}
 			buf.SetString(
 				pc.Label(i, pc.Data[i]),
-				image.Pt(labelPoint.X, labelPoint.Y),
 				AttrPair{SelectAttr(pc.Attrs, i), ColorDefault},
+				image.Pt(labelPoint.X, labelPoint.Y),
 			)
 			phi += size
 		}

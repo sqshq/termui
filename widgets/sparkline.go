@@ -85,8 +85,8 @@ func (slg *SparklineGroup) Draw(buf *Buffer) {
 			// draw title
 			buf.SetString(
 				TrimString(sl.Title, slg.Inner.Dx()),
-				image.Pt(slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset-barHeight),
 				sl.TitleAttrs,
+				image.Pt(slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset-barHeight),
 			)
 		}
 	}

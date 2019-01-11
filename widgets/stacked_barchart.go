@@ -67,11 +67,11 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 			numberXCoordinate := barXCoordinate + int((float64(bc.BarWidth) / 2)) - 1
 			buf.SetString(
 				fmt.Sprintf("%d", data),
-				image.Pt(numberXCoordinate, (bc.Inner.Max.Y-2)-stackedBarYCoordinate),
 				AttrPair{
 					SelectAttr(bc.NumAttrs, j+1),
 					SelectAttr(bc.BarAttrs, j),
 				},
+				image.Pt(numberXCoordinate, (bc.Inner.Max.Y-2)-stackedBarYCoordinate),
 			)
 
 			stackedBarYCoordinate += height
@@ -84,8 +84,8 @@ func (bc *StackedBarChart) Draw(buf *Buffer) {
 		)
 		buf.SetString(
 			TrimString(bc.Labels[i], bc.BarWidth),
-			image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
 			AttrPair{SelectAttr(bc.LabelAttrs, i), ColorDefault},
+			image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
 		)
 
 		barXCoordinate += (bc.BarWidth + bc.BarGap)

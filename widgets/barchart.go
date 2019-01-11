@@ -65,8 +65,8 @@ func (bc *BarChart) Draw(buf *Buffer) {
 				int((float64(rw.StringWidth(bc.Labels[i])) / 2))
 			buf.SetString(
 				bc.Labels[i],
-				image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
 				AttrPair{SelectAttr(bc.LabelAttrs, i), ColorDefault},
+				image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
 			)
 		}
 
@@ -75,11 +75,11 @@ func (bc *BarChart) Draw(buf *Buffer) {
 		if numberXCoordinate <= bc.Inner.Max.X {
 			buf.SetString(
 				fmt.Sprintf("%d", data),
-				image.Pt(numberXCoordinate, bc.Inner.Max.Y-2),
 				AttrPair{
 					SelectAttr(bc.NumAttrs, i+1),
 					SelectAttr(bc.BarAttrs, i),
 				},
+				image.Pt(numberXCoordinate, bc.Inner.Max.Y-2),
 			)
 		}
 

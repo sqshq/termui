@@ -2,9 +2,13 @@
 // Use of this source code is governed by a MIT license that can
 // be found in the LICENSE file.
 
-package termui
+package widgets
 
-import "image"
+import (
+	"image"
+
+	. "github.com/gizak/termui"
+)
 
 type TabPane struct {
 	Block
@@ -69,8 +73,8 @@ func (tp *TabPane) Draw(buf *Buffer) {
 		}
 		buf.SetString(
 			TrimString(tab.Title, tp.Inner.Max.X-xCoordinate),
-			image.Pt(xCoordinate, tp.Inner.Min.Y),
 			attrPair,
+			image.Pt(xCoordinate, tp.Inner.Min.Y),
 		)
 
 		xCoordinate += 1 + len(tab.Title)

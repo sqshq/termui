@@ -52,11 +52,14 @@ func (t *Table) Draw(buf *Buffer) {
 
 	yCoordinate := t.Inner.Min.Y
 
+	// draw rows
 	for i := 0; i < len(t.Rows) && yCoordinate < t.Inner.Max.Y; i++ {
 		row := t.Rows[i]
 		xCoordinate := t.Inner.Min.X
+		// draw row cells
 		for j := 0; j < len(row); j++ {
 			col := ParseText(row[j], t.TextAttrs)
+			// draw row cell
 			for k, cell := range col {
 				if k == columnWidths[j] || xCoordinate+k == t.Inner.Max.X {
 					cell.Rune = DOTS

@@ -62,7 +62,7 @@ Click image to see the corresponding demo codes.
 
 ### Examples
 
-Examples can be found in [\_examples](./_examples). Run each example with `go run _examples/{example}.go` or run all of them consecutively with `./scripts/run_examples.py`.
+Examples can be found in [\_examples](./_examples). Run an example with `go run _examples/{example}.go` or run all of them consecutively with `make run-examples`.
 
 ## Documentation
 

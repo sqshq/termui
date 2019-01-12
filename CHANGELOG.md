@@ -1,3 +1,5 @@
+Feel free to search/open an issue if something is missing or confusing from the changelog, since many things have been in flux.
+
 ## TODO
 
 - moved widgets to `github.com/gizak/termui/widgets`
@@ -18,9 +20,7 @@
 - Added `Canvas` which allows for drawing braille lines to a `Buffer`
 - Refactored `Block`
 - Refactored `Buffer` methods
-- Set `termbox-go` to 256 colors by default
-
-Feel free to search/open an issue if something is missing or confusing.
+- Set `termbox-go` backend to 256 colors by default
 
 ## 18/11/29
 

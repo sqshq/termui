@@ -284,15 +284,6 @@ func main() {
 	header.Border = false
 	header.TextAttrs.Bg = ui.ColorBlue
 
-	tabCpu := ui.NewTab("CPU")
-	tabMem := ui.NewTab("MEM")
-	tabpane := ui.NewTabPane(
-		tabCpu,
-		tabMem,
-	)
-	tabpane.SetRect(0, 1, 30, 30)
-	tabpane.Border = false
-
 	cs, errcs := getCpusStatsMap()
 	cpusStats := NewCpusStats(cs)
 
@@ -309,12 +300,10 @@ func main() {
 	}
 	sort.Strings(cpuKeys)
 	for _, key := range cpuKeys {
-		g := cpuTabElems.AddGauge(key, Y, termWidth)
+		cpuTabElems.AddGauge(key, Y, termWidth)
 		Y += 3
-		tabCpu.Blocks = append(tabCpu.Blocks, g)
 	}
 	cpuTabElems.LChart.Rectangle = cpuTabElems.LChart.GetRect().Add(image.Pt(0, Y))
-	tabCpu.Blocks = append(tabCpu.Blocks, cpuTabElems.LChart)
 
 	memTabElems := NewMemTabElems(termWidth)
 	ms, errm := getMemStats()
@@ -322,10 +311,24 @@ func main() {
 		panic(errm)
 	}
 	memTabElems.Update(ms)
-	tabMem.Blocks = append(tabMem.Blocks, memTabElems.Gauge)
-	tabMem.Blocks = append(tabMem.Blocks, memTabElems.SLines)
+
+	tabpane := widgets.NewTabPane("CPU", "MEM")
+	tabpane.SetRect(0, 1, 30, 30)
+	tabpane.Border = false
+	renderTab := func() {
+		switch tabpane.ActiveTabIndex {
+		case 0:
+			ui.Render(cpuTabElems.LChart)
+			for _, gauge := range cpuTabElems.GMap {
+				ui.Render(gauge)
+			}
+		case 1:
+			ui.Render(memTabElems.Gauge, memTabElems.SLines)
+		}
+	}
 
 	ui.Render(header, tabpane)
+	renderTab()
 
 	tickerCount := 1
 	uiEvents := ui.PollEvents()
@@ -339,9 +342,11 @@ func main() {
 			case "h":
 				tabpane.FocusLeft()
 				ui.Render(header, tabpane)
+				renderTab()
 			case "l":
 				tabpane.FocusRight()
 				ui.Render(header, tabpane)
+				renderTab()
 			}
 		case <-ticker:
 			cs, errcs := getCpusStatsMap()
@@ -357,6 +362,7 @@ func main() {
 			}
 			memTabElems.Update(ms)
 			ui.Render(header, tabpane)
+			renderTab()
 			tickerCount++
 		}
 	}

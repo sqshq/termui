@@ -29,10 +29,11 @@ type LineChart struct {
 }
 
 const (
-	yAxesWidth  = 4
-	xAxesHeight = 1
-	yAxesGap    = 1
-	xAxesGap    = 2
+	yAxisWidth              = 4
+	xAxisHeight             = 1
+	yAxisGap                = 1
+	xAxisGap                = 2
+	horizontalAxisLabelsGap = 2
 )
 
 type LineType int
@@ -57,7 +58,7 @@ func NewLineChart() *LineChart {
 		LineType:        BrailleLine,
 		DotChar:         DOT,
 		Data:            [][]float64{},
-		HorizontalScale: 3, // TODO
+		HorizontalScale: 1,
 		DrawDirection:   DrawRight,
 		ShowAxes:        true,
 	}
@@ -107,37 +108,49 @@ func (lc *LineChart) plotAxes(buf *Buffer, maxVal float64) {
 	// draw origin
 	buf.SetCell(
 		Cell{BOTTOM_LEFT, AttrPair{ColorWhite, ColorDefault}},
-		image.Pt(lc.Inner.Min.X+yAxesWidth, lc.Inner.Max.Y-xAxesHeight-1),
+		image.Pt(lc.Inner.Min.X+yAxisWidth, lc.Inner.Max.Y-xAxisHeight-1),
 	)
-	// draw x axes line
-	for i := yAxesWidth + 1; i < lc.Inner.Dx(); i++ {
+	// draw x axis line
+	for i := yAxisWidth + 1; i < lc.Inner.Dx(); i++ {
 		buf.SetCell(
 			Cell{HORIZONTAL_DASH, AttrPair{ColorWhite, ColorDefault}},
-			image.Pt(i+lc.Inner.Min.X, lc.Inner.Max.Y-xAxesHeight-1),
+			image.Pt(i+lc.Inner.Min.X, lc.Inner.Max.Y-xAxisHeight-1),
 		)
 	}
-	// draw y axes line
-	for i := 0; i < lc.Inner.Dy()-xAxesHeight-1; i++ {
+	// draw y axis line
+	for i := 0; i < lc.Inner.Dy()-xAxisHeight-1; i++ {
 		buf.SetCell(
 			Cell{VERTICAL_DASH, AttrPair{ColorWhite, ColorDefault}},
-			image.Pt(lc.Inner.Min.X+yAxesWidth, i+lc.Inner.Min.Y),
+			image.Pt(lc.Inner.Min.X+yAxisWidth, i+lc.Inner.Min.Y),
 		)
 	}
-	// draw x axes labels
-	for i := 0; (i*lc.HorizontalScale)+1 < lc.Inner.Dx()-yAxesWidth-1; i++ {
-		buf.SetString(
-			fmt.Sprintf("%d", i),
-			AttrPair{ColorWhite, ColorDefault},
-			image.Pt(lc.Inner.Min.X+yAxesWidth+(i*lc.HorizontalScale), lc.Inner.Max.Y-1),
+	// draw x axis labels
+	// draw 0
+	buf.SetString(
+		"0",
+		AttrPair{ColorWhite, ColorDefault},
+		image.Pt(lc.Inner.Min.X+yAxisWidth, lc.Inner.Max.Y-1),
+	)
+	// draw rest
+	for x := lc.Inner.Min.X + yAxisWidth + (horizontalAxisLabelsGap)*lc.HorizontalScale + 1; x < lc.Inner.Max.X-1; {
+		label := fmt.Sprintf(
+			"%d",
+			(x-(lc.Inner.Min.X+yAxisWidth)-1)/(lc.HorizontalScale)+1,
 		)
-	}
-	// draw y axes labels
-	verticalScale := maxVal / float64(lc.Inner.Dy()-xAxesHeight-1)
-	for i := 0; i*(yAxesGap+1) < lc.Inner.Dy()-1; i++ {
 		buf.SetString(
-			fmt.Sprintf("%.2f", float64(i)*verticalScale*(yAxesGap+1)),
+			label,
 			AttrPair{ColorWhite, ColorDefault},
-			image.Pt(lc.Inner.Min.X, lc.Inner.Max.Y-(i*(yAxesGap+1))-2),
+			image.Pt(x, lc.Inner.Max.Y-1),
+		)
+		x += (len(label) + horizontalAxisLabelsGap) * lc.HorizontalScale
+	}
+	// draw y axis labels
+	verticalScale := maxVal / float64(lc.Inner.Dy()-xAxisHeight-1)
+	for i := 0; i*(yAxisGap+1) < lc.Inner.Dy()-1; i++ {
+		buf.SetString(
+			fmt.Sprintf("%.2f", float64(i)*verticalScale*(yAxisGap+1)),
+			AttrPair{ColorWhite, ColorDefault},
+			image.Pt(lc.Inner.Min.X, lc.Inner.Max.Y-(i*(yAxisGap+1))-2),
 		)
 	}
 }
@@ -157,8 +170,8 @@ func (lc *LineChart) Draw(buf *Buffer) {
 	drawArea := lc.Inner
 	if lc.ShowAxes {
 		drawArea = image.Rect(
-			lc.Inner.Min.X+yAxesWidth+1, lc.Inner.Min.Y,
-			lc.Inner.Max.X, lc.Inner.Max.Y-xAxesHeight-1,
+			lc.Inner.Min.X+yAxisWidth+1, lc.Inner.Min.Y,
+			lc.Inner.Max.X, lc.Inner.Max.Y-xAxisHeight-1,
 		)
 	}
 

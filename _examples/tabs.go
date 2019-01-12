@@ -35,18 +35,20 @@ func main() {
 	bc.SetRect(5, 5, 35, 10)
 	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
 
-	tabpane := ui.NewTabPane(
-		ui.NewTab("pierwszy", p2),
-		ui.NewTab("drugi", bc),
-		ui.NewTab("trzeci"),
-		ui.NewTab("żółw"),
-		ui.NewTab("four"),
-		ui.NewTab("five"),
-	)
+	tabpane := widgets.NewTabPane("pierwszy", "drugi", "trzeci", "żółw", "four", "five")
+	renderTab := func() {
+		switch tabpane.ActiveTabIndex {
+		case 0:
+			ui.Render(p2)
+		case 1:
+			ui.Render(bc)
+		}
+	}
+
 	tabpane.SetRect(0, 1, 50, 4)
 	tabpane.Border = true
 
-	ui.Render(header, tabpane)
+	ui.Render(header, tabpane, p2)
 
 	uiEvents := ui.PollEvents()
 	for {
@@ -56,10 +58,14 @@ func main() {
 			return
 		case "h":
 			tabpane.FocusLeft()
+			ui.Clear()
 			ui.Render(header, tabpane)
+			renderTab()
 		case "l":
 			tabpane.FocusRight()
+			ui.Clear()
 			ui.Render(header, tabpane)
+			renderTab()
 		}
 	}
 }

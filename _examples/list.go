@@ -7,13 +7,15 @@
 package main
 
 import (
+	"log"
+
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/widgets"
 )
 
 func main() {
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 

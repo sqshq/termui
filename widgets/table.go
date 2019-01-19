@@ -38,42 +38,46 @@ func NewTable() *Table {
 	}
 }
 
-func (t *Table) Draw(buf *Buffer) {
-	t.Block.Draw(buf)
+func (self *Table) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	columnWidths := t.ColumnWidths
+	columnWidths := self.ColumnWidths
 	if len(columnWidths) == 0 {
-		columnCount := len(t.Rows[0])
-		colWidth := t.Inner.Dx() / columnCount
+		columnCount := len(self.Rows[0])
+		colWidth := self.Inner.Dx() / columnCount
 		for i := 0; i < columnCount; i++ {
 			columnWidths = append(columnWidths, colWidth)
 		}
 	}
 
-	yCoordinate := t.Inner.Min.Y
+	yCoordinate := self.Inner.Min.Y
 
 	// draw rows
-	for i := 0; i < len(t.Rows) && yCoordinate < t.Inner.Max.Y; i++ {
-		row := t.Rows[i]
-		xCoordinate := t.Inner.Min.X
+	for i := 0; i < len(self.Rows) && yCoordinate < self.Inner.Max.Y; i++ {
+		row := self.Rows[i]
+		xCoordinate := self.Inner.Min.X
 		// draw row cells
 		for j := 0; j < len(row); j++ {
-			col := ParseText(row[j], t.TextAttrs)
+			col := ParseText(row[j], self.TextAttrs)
 			// draw row cell
-			for k, cell := range col {
-				if k == columnWidths[j] || xCoordinate+k == t.Inner.Max.X {
-					cell.Rune = DOTS
-					buf.SetCell(cell, image.Pt(xCoordinate+k-1, yCoordinate))
-					break
-				} else {
-					buf.SetCell(cell, image.Pt(xCoordinate+k, yCoordinate))
+			if len(col) > columnWidths[j] || self.TextAlign == AlignLeft {
+				for k, cell := range col {
+					if k == columnWidths[j] || xCoordinate+k == self.Inner.Max.X {
+						cell.Rune = DOTS
+						buf.SetCell(cell, image.Pt(xCoordinate+k-1, yCoordinate))
+						break
+					} else {
+						buf.SetCell(cell, image.Pt(xCoordinate+k, yCoordinate))
+					}
 				}
+			} else if self.TextAlign == AlignCenter {
+			} else if self.TextAlign == AlignRight {
 			}
 			xCoordinate += columnWidths[j] + 1
 		}
 
 		// draw vertical separators
-		xCoordinate = t.Inner.Min.X
+		xCoordinate = self.Inner.Min.X
 		verticalCell := Cell{VERTICAL_LINE, AttrPair{ColorWhite, ColorDefault}}
 		for j := 0; j < len(columnWidths)-1; j++ {
 			xCoordinate += columnWidths[j]
@@ -85,8 +89,8 @@ func (t *Table) Draw(buf *Buffer) {
 
 		// draw horizontal separator
 		horizontalCell := Cell{HORIZONTAL_LINE, AttrPair{ColorWhite, ColorDefault}}
-		if t.RowSeparator && yCoordinate < t.Inner.Max.Y && i != len(t.Rows)-1 {
-			buf.Fill(horizontalCell, image.Rect(t.Inner.Min.X, yCoordinate, t.Inner.Max.X, yCoordinate+1))
+		if self.RowSeparator && yCoordinate < self.Inner.Max.Y && i != len(self.Rows)-1 {
+			buf.Fill(horizontalCell, image.Rect(self.Inner.Min.X, yCoordinate, self.Inner.Max.X, yCoordinate+1))
 			yCoordinate++
 		}
 	}

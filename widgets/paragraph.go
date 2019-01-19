@@ -23,15 +23,15 @@ func NewParagraph() *Paragraph {
 	}
 }
 
-func (p *Paragraph) Draw(buf *Buffer) {
-	p.Block.Draw(buf)
+func (self *Paragraph) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	point := p.Inner.Min
-	cells := WrapText(ParseText(p.Text, p.TextAttrs), p.Inner.Dx())
+	point := self.Inner.Min
+	cells := WrapText(ParseText(self.Text, self.TextAttrs), self.Inner.Dx())
 
-	for i := 0; i < len(cells) && point.Y < p.Inner.Max.Y; i++ {
+	for i := 0; i < len(cells) && point.Y < self.Inner.Max.Y; i++ {
 		if cells[i].Rune == '\n' {
-			point = image.Pt(p.Inner.Min.X, point.Y+1)
+			point = image.Pt(self.Inner.Min.X, point.Y+1)
 		} else {
 			buf.SetCell(cells[i], point)
 			point = point.Add(image.Pt(1, 0))

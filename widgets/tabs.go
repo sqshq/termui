@@ -27,39 +27,39 @@ func NewTabPane(names ...string) *TabPane {
 	}
 }
 
-func (tp *TabPane) FocusLeft() {
-	if tp.ActiveTabIndex > 0 {
-		tp.ActiveTabIndex--
+func (self *TabPane) FocusLeft() {
+	if self.ActiveTabIndex > 0 {
+		self.ActiveTabIndex--
 	}
 }
 
-func (tp *TabPane) FocusRight() {
-	if tp.ActiveTabIndex < len(tp.TabNames)-1 {
-		tp.ActiveTabIndex++
+func (self *TabPane) FocusRight() {
+	if self.ActiveTabIndex < len(self.TabNames)-1 {
+		self.ActiveTabIndex++
 	}
 }
 
-func (tp *TabPane) Draw(buf *Buffer) {
-	tp.Block.Draw(buf)
+func (self *TabPane) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	xCoordinate := tp.Inner.Min.X
-	for i, name := range tp.TabNames {
-		attrPair := tp.InactiveTabAttrs
-		if i == tp.ActiveTabIndex {
-			attrPair = tp.ActiveTabAttrs
+	xCoordinate := self.Inner.Min.X
+	for i, name := range self.TabNames {
+		attrPair := self.InactiveTabAttrs
+		if i == self.ActiveTabIndex {
+			attrPair = self.ActiveTabAttrs
 		}
 		buf.SetString(
-			TrimString(name, tp.Inner.Max.X-xCoordinate),
+			TrimString(name, self.Inner.Max.X-xCoordinate),
 			attrPair,
-			image.Pt(xCoordinate, tp.Inner.Min.Y),
+			image.Pt(xCoordinate, self.Inner.Min.Y),
 		)
 
 		xCoordinate += 1 + len(name)
 
-		if i < len(tp.TabNames)-1 && xCoordinate < tp.Inner.Max.X {
+		if i < len(self.TabNames)-1 && xCoordinate < self.Inner.Max.X {
 			buf.SetCell(
 				Cell{VERTICAL_LINE, AttrPair{ColorWhite, ColorDefault}},
-				image.Pt(xCoordinate, tp.Inner.Min.Y),
+				image.Pt(xCoordinate, self.Inner.Min.Y),
 			)
 		}
 

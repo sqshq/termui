@@ -7,13 +7,15 @@
 package main
 
 import (
+	"log"
+
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/widgets"
 )
 
 func main() {
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
@@ -31,11 +33,14 @@ func main() {
 
 	bc := widgets.NewBarChart()
 	bc.Title = "Bar Chart"
-	bc.Data = []int{3, 2, 5, 3, 9, 5, 3, 2, 5, 8, 3, 2, 4, 5, 3, 2, 5, 7, 5, 3, 2, 6, 7, 4, 6, 3, 6, 7, 8, 3, 6, 4, 5, 3, 2, 4, 6, 4, 8, 5, 9, 4, 3, 6, 5, 3, 6}
+	bc.Data = []float64{3, 2, 5, 3, 9, 5, 3, 2, 5, 8, 3, 2, 4, 5, 3, 2, 5, 7, 5, 3, 2, 6, 7, 4, 6, 3, 6, 7, 8, 3, 6, 4, 5, 3, 2, 4, 6, 4, 8, 5, 9, 4, 3, 6, 5, 3, 6}
 	bc.SetRect(5, 5, 35, 10)
 	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
 
 	tabpane := widgets.NewTabPane("pierwszy", "drugi", "trzeci", "żółw", "four", "five")
+	tabpane.SetRect(0, 1, 50, 4)
+	tabpane.Border = true
+
 	renderTab := func() {
 		switch tabpane.ActiveTabIndex {
 		case 0:
@@ -45,12 +50,10 @@ func main() {
 		}
 	}
 
-	tabpane.SetRect(0, 1, 50, 4)
-	tabpane.Border = true
-
 	ui.Render(header, tabpane, p2)
 
 	uiEvents := ui.PollEvents()
+
 	for {
 		e := <-uiEvents
 		switch e.ID {

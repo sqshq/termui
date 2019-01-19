@@ -4,13 +4,14 @@ package main
 
 import (
 	"image"
+	"log"
 
 	ui "github.com/gizak/termui"
 )
 
 func main() {
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 

@@ -24,21 +24,21 @@ func NewList() *List {
 	}
 }
 
-func (l *List) Draw(buf *Buffer) {
-	l.Block.Draw(buf)
+func (self *List) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	point := l.Inner.Min
+	point := self.Inner.Min
 
-	for row := 0; row < len(l.Rows) && point.Y < l.Inner.Max.Y; row++ {
-		cells := ParseText(l.Rows[row], l.TextAttrs)
-		if l.Wrap {
-			cells = WrapText(cells, l.Inner.Dx())
+	for row := 0; row < len(self.Rows) && point.Y < self.Inner.Max.Y; row++ {
+		cells := ParseText(self.Rows[row], self.TextAttrs)
+		if self.Wrap {
+			cells = WrapText(cells, self.Inner.Dx())
 		}
-		for j := 0; j < len(cells) && point.Y < l.Inner.Max.Y; j++ {
+		for j := 0; j < len(cells) && point.Y < self.Inner.Max.Y; j++ {
 			if cells[j].Rune == '\n' {
-				point = image.Pt(l.Inner.Min.X, point.Y+1)
+				point = image.Pt(self.Inner.Min.X, point.Y+1)
 			} else {
-				if point.X+1 == l.Inner.Max.X+1 && len(cells) > l.Inner.Dx() {
+				if point.X+1 == self.Inner.Max.X+1 && len(cells) > self.Inner.Dx() {
 					buf.SetCell(Cell{DOTS, cells[j].Attrs}, point.Add(image.Pt(-1, 0)))
 					break
 				} else {
@@ -47,6 +47,6 @@ func (l *List) Draw(buf *Buffer) {
 				}
 			}
 		}
-		point = image.Pt(l.Inner.Min.X, point.Y+1)
+		point = image.Pt(self.Inner.Min.X, point.Y+1)
 	}
 }

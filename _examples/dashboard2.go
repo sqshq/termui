@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"image"
 	"io"
+	"log"
 	"os"
 	"regexp"
 	"runtime"
@@ -257,11 +258,11 @@ func NewMemTabElems(width int) *MemTabElems {
 }
 
 func (mte *MemTabElems) Update(ms MemStat) {
-	used := int((ms.total - ms.free) * 100 / ms.total)
-	mte.Gauge.Percent = used
+	used := (ms.total - ms.free) * 100 / ms.total
+	mte.Gauge.Percent = int(used)
 	mte.SLines.Sparklines[0].Data = append(mte.SLines.Sparklines[0].Data, 0)
 	copy(mte.SLines.Sparklines[0].Data[1:], mte.SLines.Sparklines[0].Data[0:])
-	mte.SLines.Sparklines[0].Data[0] = used
+	mte.SLines.Sparklines[0].Data[0] = float64(used)
 	if len(mte.SLines.Sparklines[0].Data) > mte.SLines.Dx()-2 {
 		mte.SLines.Sparklines[0].Data = mte.SLines.Sparklines[0].Data[0 : mte.SLines.Dx()-2]
 	}
@@ -269,10 +270,10 @@ func (mte *MemTabElems) Update(ms MemStat) {
 
 func main() {
 	if runtime.GOOS != "linux" {
-		panic("Currently works only on Linux")
+		log.Fatalf("Currently only works on Linux")
 	}
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 

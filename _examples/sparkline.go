@@ -7,17 +7,19 @@
 package main
 
 import (
+	"log"
+
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/widgets"
 )
 
 func main() {
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
-	data := []int{4, 2, 1, 6, 3, 9, 1, 4, 2, 15, 14, 9, 8, 6, 10, 13, 15, 12, 10, 5, 3, 6, 1, 7, 10, 10, 14, 13, 6}
+	data := []float64{4, 2, 1, 6, 3, 9, 1, 4, 2, 15, 14, 9, 8, 6, 10, 13, 15, 12, 10, 5, 3, 6, 1, 7, 10, 10, 14, 13, 6}
 
 	sl0 := widgets.NewSparkline()
 	sl0.Data = data[3:]

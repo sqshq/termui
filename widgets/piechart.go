@@ -34,16 +34,16 @@ func NewPieChart() *PieChart {
 	}
 }
 
-func (pc *PieChart) Draw(buf *Buffer) {
-	pc.Block.Draw(buf)
+func (self *PieChart) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	center := pc.Inner.Min.Add(pc.Inner.Size().Div(2))
-	radius := MinFloat64(float64(pc.Inner.Dx()/2/xStretch), float64(pc.Inner.Dy()/2))
+	center := self.Inner.Min.Add(self.Inner.Size().Div(2))
+	radius := MinFloat64(float64(self.Inner.Dx()/2/xStretch), float64(self.Inner.Dy()/2))
 
 	// compute slice sizes
-	sum := SumSliceFloat64(pc.Data)
-	sliceSizes := make([]float64, len(pc.Data))
-	for i, v := range pc.Data {
+	sum := SumFloat64Slice(self.Data)
+	sliceSizes := make([]float64, len(self.Data))
+	for i, v := range self.Data {
 		sliceSizes[i] = v / sum * fullCircle
 	}
 
@@ -51,27 +51,27 @@ func (pc *PieChart) Draw(buf *Buffer) {
 	middleCircle := circle{Point: center, radius: radius / 2.0}
 
 	// draw sectors
-	phi := pc.Offset
+	phi := self.Offset
 	for i, size := range sliceSizes {
 		for j := 0.0; j < size; j += resolutionFactor {
 			borderPoint := borderCircle.at(phi + j)
 			line := line{P1: center, P2: borderPoint}
-			line.draw(Cell{SOLID_BLOCK, AttrPair{SelectAttr(pc.Attrs, i), ColorDefault}}, buf)
+			line.draw(Cell{SOLID_BLOCK, AttrPair{SelectAttr(self.Attrs, i), ColorDefault}}, buf)
 		}
 		phi += size
 	}
 
 	// draw labels
-	if pc.Label != nil {
-		phi = pc.Offset
+	if self.Label != nil {
+		phi = self.Offset
 		for i, size := range sliceSizes {
 			labelPoint := middleCircle.at(phi + size/2.0)
-			if len(pc.Data) == 1 {
+			if len(self.Data) == 1 {
 				labelPoint = center
 			}
 			buf.SetString(
-				pc.Label(i, pc.Data[i]),
-				AttrPair{SelectAttr(pc.Attrs, i), ColorDefault},
+				self.Label(i, self.Data[i]),
+				AttrPair{SelectAttr(self.Attrs, i), ColorDefault},
 				image.Pt(labelPoint.X, labelPoint.Y),
 			)
 			phi += size
@@ -85,15 +85,15 @@ type circle struct {
 }
 
 // computes the point at a given angle phi
-func (c circle) at(phi float64) image.Point {
-	x := c.X + int(RoundFloat64(xStretch*c.radius*math.Cos(phi)))
-	y := c.Y + int(RoundFloat64(c.radius*math.Sin(phi)))
+func (self circle) at(phi float64) image.Point {
+	x := self.X + int(RoundFloat64(xStretch*self.radius*math.Cos(phi)))
+	y := self.Y + int(RoundFloat64(self.radius*math.Sin(phi)))
 	return image.Point{X: x, Y: y}
 }
 
 // computes the perimeter of a circle
-func (c circle) perimeter() float64 {
-	return 2.0 * math.Pi * c.radius
+func (self circle) perimeter() float64 {
+	return 2.0 * math.Pi * self.radius
 }
 
 // a line between two points
@@ -102,16 +102,16 @@ type line struct {
 }
 
 // draws the line
-func (l line) draw(cell Cell, buf *Buffer) {
+func (self line) draw(cell Cell, buf *Buffer) {
 	isLeftOf := func(p1, p2 image.Point) bool {
 		return p1.X <= p2.X
 	}
 	isTopOf := func(p1, p2 image.Point) bool {
 		return p1.Y <= p2.Y
 	}
-	p1, p2 := l.P1, l.P2
-	buf.SetCell(Cell{'*', cell.Attrs}, l.P2)
-	width, height := l.size()
+	p1, p2 := self.P1, self.P2
+	buf.SetCell(Cell{'*', cell.Attrs}, self.P2)
+	width, height := self.size()
 	if width > height { // paint left to right
 		if !isLeftOf(p1, p2) {
 			p1, p2 = p2, p1
@@ -144,6 +144,6 @@ func (l line) draw(cell Cell, buf *Buffer) {
 }
 
 // width and height of a line
-func (l line) size() (w, h int) {
-	return AbsInt(l.P2.X - l.P1.X), AbsInt(l.P2.Y - l.P1.Y)
+func (self line) size() (w, h int) {
+	return AbsInt(self.P2.X - self.P1.X), AbsInt(self.P2.Y - self.P1.Y)
 }

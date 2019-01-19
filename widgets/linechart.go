@@ -65,24 +65,24 @@ func NewLineChart() *LineChart {
 }
 
 // one cell contains two data points, so capicity is 2x dot mode
-func (lc *LineChart) renderBraille(buf *Buffer, drawArea image.Rectangle, maxVal float64) {
+func (self *LineChart) renderBraille(buf *Buffer, drawArea image.Rectangle, maxVal float64) {
 	canvas := NewCanvas()
 	canvas.Rectangle = drawArea
 
-	for i, line := range lc.Data {
+	for i, line := range self.Data {
 		previousHeight := int((line[1] / maxVal) * float64(drawArea.Dy()-1))
 		for j, val := range line[1:] {
 			height := int((val / maxVal) * float64(drawArea.Dy()-1))
 			canvas.Line(
 				image.Pt(
-					(drawArea.Min.X+(j*lc.HorizontalScale))*2,
+					(drawArea.Min.X+(j*self.HorizontalScale))*2,
 					(drawArea.Max.Y-previousHeight-1)*4,
 				),
 				image.Pt(
-					(drawArea.Min.X+((j+1)*lc.HorizontalScale))*2,
+					(drawArea.Min.X+((j+1)*self.HorizontalScale))*2,
 					(drawArea.Max.Y-height-1)*4,
 				),
-				SelectAttr(lc.LineAttrs, i),
+				SelectAttr(self.LineAttrs, i),
 			)
 			previousHeight = height
 		}
@@ -91,37 +91,37 @@ func (lc *LineChart) renderBraille(buf *Buffer, drawArea image.Rectangle, maxVal
 	canvas.Draw(buf)
 }
 
-func (lc *LineChart) renderDot(buf *Buffer, drawArea image.Rectangle, maxVal float64) {
-	for i, line := range lc.Data {
-		for j := 0; j < len(line) && j*lc.HorizontalScale < drawArea.Dx(); j++ {
+func (self *LineChart) renderDot(buf *Buffer, drawArea image.Rectangle, maxVal float64) {
+	for i, line := range self.Data {
+		for j := 0; j < len(line) && j*self.HorizontalScale < drawArea.Dx(); j++ {
 			val := line[j]
 			height := int((val / maxVal) * float64(drawArea.Dy()-1))
 			buf.SetCell(
-				Cell{lc.DotChar, AttrPair{SelectAttr(lc.LineAttrs, i), ColorDefault}},
-				image.Pt(drawArea.Min.X+(j*lc.HorizontalScale), drawArea.Max.Y-1-height),
+				Cell{self.DotChar, AttrPair{SelectAttr(self.LineAttrs, i), ColorDefault}},
+				image.Pt(drawArea.Min.X+(j*self.HorizontalScale), drawArea.Max.Y-1-height),
 			)
 		}
 	}
 }
 
-func (lc *LineChart) plotAxes(buf *Buffer, maxVal float64) {
+func (self *LineChart) plotAxes(buf *Buffer, maxVal float64) {
 	// draw origin
 	buf.SetCell(
 		Cell{BOTTOM_LEFT, AttrPair{ColorWhite, ColorDefault}},
-		image.Pt(lc.Inner.Min.X+yAxisWidth, lc.Inner.Max.Y-xAxisHeight-1),
+		image.Pt(self.Inner.Min.X+yAxisWidth, self.Inner.Max.Y-xAxisHeight-1),
 	)
 	// draw x axis line
-	for i := yAxisWidth + 1; i < lc.Inner.Dx(); i++ {
+	for i := yAxisWidth + 1; i < self.Inner.Dx(); i++ {
 		buf.SetCell(
 			Cell{HORIZONTAL_DASH, AttrPair{ColorWhite, ColorDefault}},
-			image.Pt(i+lc.Inner.Min.X, lc.Inner.Max.Y-xAxisHeight-1),
+			image.Pt(i+self.Inner.Min.X, self.Inner.Max.Y-xAxisHeight-1),
 		)
 	}
 	// draw y axis line
-	for i := 0; i < lc.Inner.Dy()-xAxisHeight-1; i++ {
+	for i := 0; i < self.Inner.Dy()-xAxisHeight-1; i++ {
 		buf.SetCell(
 			Cell{VERTICAL_DASH, AttrPair{ColorWhite, ColorDefault}},
-			image.Pt(lc.Inner.Min.X+yAxisWidth, i+lc.Inner.Min.Y),
+			image.Pt(self.Inner.Min.X+yAxisWidth, i+self.Inner.Min.Y),
 		)
 	}
 	// draw x axis labels
@@ -129,55 +129,55 @@ func (lc *LineChart) plotAxes(buf *Buffer, maxVal float64) {
 	buf.SetString(
 		"0",
 		AttrPair{ColorWhite, ColorDefault},
-		image.Pt(lc.Inner.Min.X+yAxisWidth, lc.Inner.Max.Y-1),
+		image.Pt(self.Inner.Min.X+yAxisWidth, self.Inner.Max.Y-1),
 	)
 	// draw rest
-	for x := lc.Inner.Min.X + yAxisWidth + (horizontalAxisLabelsGap)*lc.HorizontalScale + 1; x < lc.Inner.Max.X-1; {
+	for x := self.Inner.Min.X + yAxisWidth + (horizontalAxisLabelsGap)*self.HorizontalScale + 1; x < self.Inner.Max.X-1; {
 		label := fmt.Sprintf(
 			"%d",
-			(x-(lc.Inner.Min.X+yAxisWidth)-1)/(lc.HorizontalScale)+1,
+			(x-(self.Inner.Min.X+yAxisWidth)-1)/(self.HorizontalScale)+1,
 		)
 		buf.SetString(
 			label,
 			AttrPair{ColorWhite, ColorDefault},
-			image.Pt(x, lc.Inner.Max.Y-1),
+			image.Pt(x, self.Inner.Max.Y-1),
 		)
-		x += (len(label) + horizontalAxisLabelsGap) * lc.HorizontalScale
+		x += (len(label) + horizontalAxisLabelsGap) * self.HorizontalScale
 	}
 	// draw y axis labels
-	verticalScale := maxVal / float64(lc.Inner.Dy()-xAxisHeight-1)
-	for i := 0; i*(yAxisGap+1) < lc.Inner.Dy()-1; i++ {
+	verticalScale := maxVal / float64(self.Inner.Dy()-xAxisHeight-1)
+	for i := 0; i*(yAxisGap+1) < self.Inner.Dy()-1; i++ {
 		buf.SetString(
 			fmt.Sprintf("%.2f", float64(i)*verticalScale*(yAxisGap+1)),
 			AttrPair{ColorWhite, ColorDefault},
-			image.Pt(lc.Inner.Min.X, lc.Inner.Max.Y-(i*(yAxisGap+1))-2),
+			image.Pt(self.Inner.Min.X, self.Inner.Max.Y-(i*(yAxisGap+1))-2),
 		)
 	}
 }
 
-func (lc *LineChart) Draw(buf *Buffer) {
-	lc.Block.Draw(buf)
+func (self *LineChart) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	maxVal := lc.MaxVal
+	maxVal := self.MaxVal
 	if maxVal == 0 {
-		maxVal, _ = GetMaxFloat64From2dSlice(lc.Data)
+		maxVal, _ = GetMaxFloat64From2dSlice(self.Data)
 	}
 
-	if lc.ShowAxes {
-		lc.plotAxes(buf, maxVal)
+	if self.ShowAxes {
+		self.plotAxes(buf, maxVal)
 	}
 
-	drawArea := lc.Inner
-	if lc.ShowAxes {
+	drawArea := self.Inner
+	if self.ShowAxes {
 		drawArea = image.Rect(
-			lc.Inner.Min.X+yAxisWidth+1, lc.Inner.Min.Y,
-			lc.Inner.Max.X, lc.Inner.Max.Y-xAxisHeight-1,
+			self.Inner.Min.X+yAxisWidth+1, self.Inner.Min.Y,
+			self.Inner.Max.X, self.Inner.Max.Y-xAxisHeight-1,
 		)
 	}
 
-	if lc.LineType == BrailleLine {
-		lc.renderBraille(buf, drawArea, maxVal)
+	if self.LineType == BrailleLine {
+		self.renderBraille(buf, drawArea, maxVal)
 	} else {
-		lc.renderDot(buf, drawArea, maxVal)
+		self.renderDot(buf, drawArea, maxVal)
 	}
 }

@@ -27,29 +27,29 @@ func NewGauge() *Gauge {
 	}
 }
 
-func (g *Gauge) Draw(buf *Buffer) {
-	g.Block.Draw(buf)
+func (self *Gauge) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	label := g.Label
+	label := self.Label
 	if label == "" {
-		label = fmt.Sprintf("%d%%", g.Percent)
+		label = fmt.Sprintf("%d%%", self.Percent)
 	}
 
 	// plot bar
-	barWidth := int((float64(g.Percent) / 100) * float64(g.Inner.Dx()))
+	barWidth := int((float64(self.Percent) / 100) * float64(self.Inner.Dx()))
 	buf.Fill(
-		Cell{' ', AttrPair{ColorDefault, g.BarAttr}},
-		image.Rect(g.Inner.Min.X, g.Inner.Min.Y, g.Inner.Min.X+barWidth, g.Inner.Max.Y),
+		Cell{' ', AttrPair{ColorDefault, self.BarAttr}},
+		image.Rect(self.Inner.Min.X, self.Inner.Min.Y, self.Inner.Min.X+barWidth, self.Inner.Max.Y),
 	)
 
 	// plot label
-	labelXCoordinate := g.Inner.Min.X + (g.Inner.Dx() / 2) - int(float64(len(label))/2)
-	labelYCoordinate := g.Inner.Min.Y + ((g.Inner.Dy() - 1) / 2)
-	if labelYCoordinate < g.Inner.Max.Y {
+	labelXCoordinate := self.Inner.Min.X + (self.Inner.Dx() / 2) - int(float64(len(label))/2)
+	labelYCoordinate := self.Inner.Min.Y + ((self.Inner.Dy() - 1) / 2)
+	if labelYCoordinate < self.Inner.Max.Y {
 		for i, char := range label {
-			attrs := AttrPair{g.PercentAttr, ColorDefault}
-			if labelXCoordinate+i+1 <= g.Inner.Min.X+barWidth {
-				attrs = AttrPair{g.BarAttr, AttrReverse}
+			attrs := AttrPair{self.PercentAttr, ColorDefault}
+			if labelXCoordinate+i+1 <= self.Inner.Min.X+barWidth {
+				attrs = AttrPair{self.BarAttr, AttrReverse}
 			}
 			buf.SetCell(Cell{char, attrs}, image.Pt(labelXCoordinate+i, labelYCoordinate))
 		}

@@ -47,9 +47,9 @@ func AddColorMap(str string, attr Attribute) {
 }
 
 // readAttributes translates strings like `fg-red,fg-bold,bg-white` to fg and bg Attribute
-func (tp *textParser) readAttributes(s string) (Attribute, Attribute) {
-	fg := tp.baseAttrs.Fg
-	bg := tp.baseAttrs.Bg
+func (self *textParser) readAttributes(s string) (Attribute, Attribute) {
+	fg := self.baseAttrs.Fg
+	bg := self.baseAttrs.Bg
 
 	updateAttr := func(a Attribute, attrs []string) Attribute {
 		for _, s := range attrs {
@@ -87,7 +87,7 @@ func (tp *textParser) readAttributes(s string) (Attribute, Attribute) {
 }
 
 // parse streams and parses text into normalized text and render sequence.
-func (tp *textParser) parse(str string) {
+func (self *textParser) parse(str string) {
 	rs := []rune(str)
 	normTx := []rune{}
 	square := []rune{}
@@ -120,10 +120,10 @@ func (tp *textParser) parse(str string) {
 		case accBrackt:
 			brackt = append(brackt, r)
 			if ')' == r {
-				fg, bg := tp.readAttributes(string(chop(brackt)))
+				fg, bg := self.readAttributes(string(chop(brackt)))
 				st := len(normTx)
 				ed := len(normTx) + len(square) - 2
-				tp.markers = append(tp.markers, marker{st, ed, fg, bg})
+				self.markers = append(self.markers, marker{st, ed, fg, bg})
 				normTx = append(normTx, chop(square)...)
 				reset()
 			} else if i+1 == len(rs) {
@@ -172,7 +172,7 @@ func (tp *textParser) parse(str string) {
 		}
 	}
 
-	tp.plainTx = normTx
+	self.plainTx = normTx
 }
 
 func WrapText(cs []Cell, wl int) []Cell {
@@ -245,12 +245,11 @@ func ParseText(s string, baseAttrs AttrPair) []Cell {
 	for i := range cs {
 		cs[i] = Cell{tp.plainTx[i], baseAttrs}
 	}
-	for _, mrk := range tp.markers {
-		for i := mrk.st; i < mrk.ed; i++ {
-			cs[i].Attrs.Fg = mrk.fg
-			cs[i].Attrs.Bg = mrk.bg
+	for _, marker := range tp.markers {
+		for i := marker.st; i < marker.ed; i++ {
+			cs[i].Attrs.Fg = marker.fg
+			cs[i].Attrs.Bg = marker.bg
 		}
 	}
-
 	return cs
 }

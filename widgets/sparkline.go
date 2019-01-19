@@ -12,11 +12,11 @@ import (
 
 // Sparkline is like: ▅▆▂▂▅▇▂▂▃▆▆▆▅▃. The data points should be non-negative integers.
 type Sparkline struct {
-	Data       []int
+	Data       []float64
 	Title      string
 	TitleAttrs AttrPair
 	LineAttr   Attribute
-	MaxVal     int
+	MaxVal     float64
 }
 
 // SparklineGroup is a renderable widget which groups together the given sparklines.
@@ -40,17 +40,17 @@ func NewSparklineGroup(sls ...*Sparkline) *SparklineGroup {
 	}
 }
 
-func (slg *SparklineGroup) Draw(buf *Buffer) {
-	slg.Block.Draw(buf)
+func (self *SparklineGroup) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	sparklineHeight := slg.Inner.Dy() / len(slg.Sparklines)
+	sparklineHeight := self.Inner.Dy() / len(self.Sparklines)
 
-	for i, sl := range slg.Sparklines {
+	for i, sl := range self.Sparklines {
 		heightOffset := (sparklineHeight * (i + 1))
 		barHeight := sparklineHeight
-		if i == len(slg.Sparklines)-1 {
-			heightOffset = slg.Inner.Dy()
-			barHeight = slg.Inner.Dy() - (sparklineHeight * i)
+		if i == len(self.Sparklines)-1 {
+			heightOffset = self.Inner.Dy()
+			barHeight = self.Inner.Dy() - (sparklineHeight * i)
 		}
 		if sl.Title != "" {
 			barHeight--
@@ -58,25 +58,25 @@ func (slg *SparklineGroup) Draw(buf *Buffer) {
 
 		maxVal := sl.MaxVal
 		if maxVal == 0 {
-			maxVal, _ = GetMaxIntFromSlice(sl.Data)
+			maxVal, _ = GetMaxFloat64FromSlice(sl.Data)
 		}
 
 		// draw line
-		for j := 0; j < len(sl.Data) && j < slg.Inner.Dx(); j++ {
+		for j := 0; j < len(sl.Data) && j < self.Inner.Dx(); j++ {
 			data := sl.Data[j]
-			height := int((float64(data) / float64(maxVal)) * float64(barHeight))
+			height := int((data / maxVal) * float64(barHeight))
 			sparkChar := SPARK_CHARS[len(SPARK_CHARS)-1]
 			for k := 0; k < height; k++ {
 				buf.SetCell(
 					Cell{sparkChar, AttrPair{sl.LineAttr, ColorDefault}},
-					image.Pt(j+slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset-k),
+					image.Pt(j+self.Inner.Min.X, self.Inner.Min.Y-1+heightOffset-k),
 				)
 			}
 			if height == 0 {
 				sparkChar = SPARK_CHARS[0]
 				buf.SetCell(
 					Cell{sparkChar, AttrPair{sl.LineAttr, ColorDefault}},
-					image.Pt(j+slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset),
+					image.Pt(j+self.Inner.Min.X, self.Inner.Min.Y-1+heightOffset),
 				)
 			}
 		}
@@ -84,9 +84,9 @@ func (slg *SparklineGroup) Draw(buf *Buffer) {
 		if sl.Title != "" {
 			// draw title
 			buf.SetString(
-				TrimString(sl.Title, slg.Inner.Dx()),
+				TrimString(sl.Title, self.Inner.Dx()),
 				sl.TitleAttrs,
-				image.Pt(slg.Inner.Min.X, slg.Inner.Min.Y-1+heightOffset-barHeight),
+				image.Pt(self.Inner.Min.X, self.Inner.Min.Y-1+heightOffset-barHeight),
 			)
 		}
 	}

@@ -7,13 +7,15 @@
 package main
 
 import (
+	"log"
+
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/widgets"
 )
 
 func main() {
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
@@ -21,11 +23,11 @@ func main() {
 	sbc.Title = "Student's Marks: X-Axis=Name, Y-Axis=Grade% (Math, English, Science, Computer Science)"
 	sbc.Labels = []string{"Ken", "Rob", "Dennis", "Linus"}
 
-	sbc.Data = make([][]int, 4)
-	sbc.Data[0] = []int{90, 85, 90, 80}
-	sbc.Data[1] = []int{70, 85, 75, 60}
-	sbc.Data[2] = []int{75, 60, 80, 85}
-	sbc.Data[3] = []int{100, 100, 100, 100}
+	sbc.Data = make([][]float64, 4)
+	sbc.Data[0] = []float64{90, 85, 90, 80}
+	sbc.Data[1] = []float64{70, 85, 75, 60}
+	sbc.Data[2] = []float64{75, 60, 80, 85}
+	sbc.Data[3] = []float64{100, 100, 100, 100}
 	sbc.SetRect(5, 5, 100, 30)
 	sbc.BarWidth = 5
 

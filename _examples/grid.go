@@ -7,6 +7,7 @@
 package main
 
 import (
+	"log"
 	"math"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 
 func main() {
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
@@ -29,16 +30,8 @@ func main() {
 		return data
 	})()
 
-	sinInt := (func() []int {
-		data := make([]int, len(sinFloat64))
-		for i, x := range sinFloat64 {
-			data[i] = int(100*x + 10)
-		}
-		return data
-	})()
-
 	sl := widgets.NewSparkline()
-	sl.Data = sinInt[:100]
+	sl.Data = sinFloat64[:100]
 	sl.LineAttr = ui.ColorCyan
 	sl.TitleAttrs.Fg = ui.ColorWhite
 
@@ -119,7 +112,7 @@ func main() {
 			for _, g := range gs {
 				g.Percent = (g.Percent + 3) % 100
 			}
-			slg.Sparklines[0].Data = sinInt[tickerCount : tickerCount+100]
+			slg.Sparklines[0].Data = sinFloat64[tickerCount : tickerCount+100]
 			lc.Data[0] = sinFloat64[2*tickerCount:]
 			ui.Render(grid)
 			tickerCount++

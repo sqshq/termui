@@ -29,24 +29,24 @@ func NewBuffer(r image.Rectangle) *Buffer {
 	return buf
 }
 
-func (b *Buffer) GetCell(p image.Point) Cell {
-	return b.CellMap[p]
+func (self *Buffer) GetCell(p image.Point) Cell {
+	return self.CellMap[p]
 }
 
-func (b *Buffer) SetCell(c Cell, p image.Point) {
-	b.CellMap[p] = c
+func (self *Buffer) SetCell(c Cell, p image.Point) {
+	self.CellMap[p] = c
 }
 
-func (b *Buffer) Fill(c Cell, rect image.Rectangle) {
+func (self *Buffer) Fill(c Cell, rect image.Rectangle) {
 	for x := rect.Min.X; x < rect.Max.X; x++ {
 		for y := rect.Min.Y; y < rect.Max.Y; y++ {
-			b.SetCell(c, image.Pt(x, y))
+			self.SetCell(c, image.Pt(x, y))
 		}
 	}
 }
 
-func (b *Buffer) SetString(s string, pair AttrPair, p image.Point) {
+func (self *Buffer) SetString(s string, pair AttrPair, p image.Point) {
 	for i, char := range s {
-		b.SetCell(Cell{char, pair}, image.Pt(p.X+i, p.Y))
+		self.SetCell(Cell{char, pair}, image.Pt(p.X+i, p.Y))
 	}
 }

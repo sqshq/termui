@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"math/rand"
 	"time"
@@ -12,9 +13,11 @@ import (
 	"github.com/gizak/termui/widgets"
 )
 
+var run = true
+
 func main() {
 	if err := ui.Init(); err != nil {
-		panic(err)
+		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
@@ -28,7 +31,6 @@ func main() {
 		offset = 2.0 * math.Pi * rand.Float64()
 		return
 	}
-	run := true
 
 	pc := widgets.NewPieChart()
 	pc.Title = "Pie Chart"

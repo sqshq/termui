@@ -18,12 +18,12 @@ type BarChart struct {
 	BarAttrs   []Attribute
 	LabelAttrs []Attribute
 	NumAttrs   []Attribute
-	NumFmt     func(int) string
-	Data       []int
+	NumFmt     func(float64) string
+	Data       []float64
 	Labels     []string
 	BarWidth   int
 	BarGap     int
-	MaxVal     int
+	MaxVal     float64
 }
 
 func NewBarChart() *BarChart {
@@ -32,57 +32,57 @@ func NewBarChart() *BarChart {
 		BarAttrs:   Theme.BarChart.Bars,
 		NumAttrs:   Theme.BarChart.Nums,
 		LabelAttrs: Theme.BarChart.Labels,
-		NumFmt:     func(n int) string { return fmt.Sprint(n) },
+		NumFmt:     func(n float64) string { return fmt.Sprint(n) },
 		BarGap:     1,
 		BarWidth:   3,
 	}
 }
 
-func (bc *BarChart) Draw(buf *Buffer) {
-	bc.Block.Draw(buf)
+func (self *BarChart) Draw(buf *Buffer) {
+	self.Block.Draw(buf)
 
-	maxVal := bc.MaxVal
+	maxVal := self.MaxVal
 	if maxVal == 0 {
-		maxVal, _ = GetMaxIntFromSlice(bc.Data)
+		maxVal, _ = GetMaxFloat64FromSlice(self.Data)
 	}
 
-	barXCoordinate := bc.Inner.Min.X
+	barXCoordinate := self.Inner.Min.X
 
-	for i, data := range bc.Data {
+	for i, data := range self.Data {
 		// draw bar
-		height := int((float64(data) / float64(maxVal)) * float64(bc.Inner.Dy()-1))
-		for x := barXCoordinate; x < MinInt(barXCoordinate+bc.BarWidth, bc.Inner.Max.X); x++ {
-			for y := bc.Inner.Max.Y - 2; y > (bc.Inner.Max.Y-2)-height; y-- {
-				c := Cell{' ', AttrPair{ColorDefault, SelectAttr(bc.BarAttrs, i)}}
+		height := int((data / maxVal) * float64(self.Inner.Dy()-1))
+		for x := barXCoordinate; x < MinInt(barXCoordinate+self.BarWidth, self.Inner.Max.X); x++ {
+			for y := self.Inner.Max.Y - 2; y > (self.Inner.Max.Y-2)-height; y-- {
+				c := Cell{' ', AttrPair{ColorDefault, SelectAttr(self.BarAttrs, i)}}
 				buf.SetCell(c, image.Pt(x, y))
 			}
 		}
 
 		// draw label
-		if i < len(bc.Labels) {
+		if i < len(self.Labels) {
 			labelXCoordinate := barXCoordinate +
-				int((float64(bc.BarWidth) / 2)) -
-				int((float64(rw.StringWidth(bc.Labels[i])) / 2))
+				int((float64(self.BarWidth) / 2)) -
+				int((float64(rw.StringWidth(self.Labels[i])) / 2))
 			buf.SetString(
-				bc.Labels[i],
-				AttrPair{SelectAttr(bc.LabelAttrs, i), ColorDefault},
-				image.Pt(labelXCoordinate, bc.Inner.Max.Y-1),
+				self.Labels[i],
+				AttrPair{SelectAttr(self.LabelAttrs, i), ColorDefault},
+				image.Pt(labelXCoordinate, self.Inner.Max.Y-1),
 			)
 		}
 
 		// draw number
-		numberXCoordinate := barXCoordinate + int((float64(bc.BarWidth) / 2))
-		if numberXCoordinate <= bc.Inner.Max.X {
+		numberXCoordinate := barXCoordinate + int((float64(self.BarWidth) / 2))
+		if numberXCoordinate <= self.Inner.Max.X {
 			buf.SetString(
-				fmt.Sprintf("%d", data),
+				self.NumFmt(data),
 				AttrPair{
-					SelectAttr(bc.NumAttrs, i+1),
-					SelectAttr(bc.BarAttrs, i),
+					SelectAttr(self.NumAttrs, i+1),
+					SelectAttr(self.BarAttrs, i),
 				},
-				image.Pt(numberXCoordinate, bc.Inner.Max.Y-2),
+				image.Pt(numberXCoordinate, self.Inner.Max.Y-2),
 			)
 		}
 
-		barXCoordinate += (bc.BarWidth + bc.BarGap)
+		barXCoordinate += (self.BarWidth + self.BarGap)
 	}
 }

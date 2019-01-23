@@ -47,6 +47,7 @@ func main() {
 	lc1.DotChar = '+'
 	lc1.AxesAttr = ui.ColorWhite
 	lc1.LineAttrs[0] = ui.ColorYellow | ui.AttrBold
+	lc1.DrawDirection = widgets.DrawLeft
 
 	lc2 := widgets.NewLineChart()
 	lc2.Title = "dot-mode Line Chart"

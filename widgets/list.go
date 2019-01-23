@@ -14,13 +14,13 @@ type List struct {
 	Block
 	Rows      []string
 	Wrap      bool
-	TextAttrs AttrPair
+	TextStyle Style
 }
 
 func NewList() *List {
 	return &List{
 		Block:     *NewBlock(),
-		TextAttrs: Theme.List.Text,
+		TextStyle: Theme.List.Text,
 	}
 }
 
@@ -30,7 +30,7 @@ func (self *List) Draw(buf *Buffer) {
 	point := self.Inner.Min
 
 	for row := 0; row < len(self.Rows) && point.Y < self.Inner.Max.Y; row++ {
-		cells := ParseText(self.Rows[row], self.TextAttrs)
+		cells := ParseText(self.Rows[row], self.TextStyle)
 		if self.Wrap {
 			cells = WrapText(cells, self.Inner.Dx())
 		}
@@ -39,7 +39,7 @@ func (self *List) Draw(buf *Buffer) {
 				point = image.Pt(self.Inner.Min.X, point.Y+1)
 			} else {
 				if point.X+1 == self.Inner.Max.X+1 && len(cells) > self.Inner.Dx() {
-					buf.SetCell(Cell{DOTS, cells[j].Attrs}, point.Add(image.Pt(-1, 0)))
+					buf.SetCell(NewCell(DOTS, cells[j].Style), point.Add(image.Pt(-1, 0)))
 					break
 				} else {
 					buf.SetCell(cells[j], point)

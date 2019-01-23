@@ -15,26 +15,26 @@ import (
 
 type BarChart struct {
 	Block
-	BarAttrs   []Attribute
-	LabelAttrs []Attribute
-	NumAttrs   []Attribute
-	NumFmt     func(float64) string
-	Data       []float64
-	Labels     []string
-	BarWidth   int
-	BarGap     int
-	MaxVal     float64
+	BarColors   []Color
+	LabelColors []Color
+	NumColors   []Color
+	NumFmt      func(float64) string
+	Data        []float64
+	Labels      []string
+	BarWidth    int
+	BarGap      int
+	MaxVal      float64
 }
 
 func NewBarChart() *BarChart {
 	return &BarChart{
-		Block:      *NewBlock(),
-		BarAttrs:   Theme.BarChart.Bars,
-		NumAttrs:   Theme.BarChart.Nums,
-		LabelAttrs: Theme.BarChart.Labels,
-		NumFmt:     func(n float64) string { return fmt.Sprint(n) },
-		BarGap:     1,
-		BarWidth:   3,
+		Block:       *NewBlock(),
+		BarColors:   Theme.BarChart.Bars,
+		NumColors:   Theme.BarChart.Nums,
+		LabelColors: Theme.BarChart.Labels,
+		NumFmt:      func(n float64) string { return fmt.Sprint(n) },
+		BarGap:      1,
+		BarWidth:    3,
 	}
 }
 
@@ -53,7 +53,7 @@ func (self *BarChart) Draw(buf *Buffer) {
 		height := int((data / maxVal) * float64(self.Inner.Dy()-1))
 		for x := barXCoordinate; x < MinInt(barXCoordinate+self.BarWidth, self.Inner.Max.X); x++ {
 			for y := self.Inner.Max.Y - 2; y > (self.Inner.Max.Y-2)-height; y-- {
-				c := Cell{' ', AttrPair{ColorDefault, SelectAttr(self.BarAttrs, i)}}
+				c := NewCell(' ', NewStyle(ColorClear, SelectColor(self.BarColors, i)))
 				buf.SetCell(c, image.Pt(x, y))
 			}
 		}
@@ -65,7 +65,7 @@ func (self *BarChart) Draw(buf *Buffer) {
 				int((float64(rw.StringWidth(self.Labels[i])) / 2))
 			buf.SetString(
 				self.Labels[i],
-				AttrPair{SelectAttr(self.LabelAttrs, i), ColorDefault},
+				NewStyle(SelectColor(self.LabelColors, i)),
 				image.Pt(labelXCoordinate, self.Inner.Max.Y-1),
 			)
 		}
@@ -75,10 +75,10 @@ func (self *BarChart) Draw(buf *Buffer) {
 		if numberXCoordinate <= self.Inner.Max.X {
 			buf.SetString(
 				self.NumFmt(data),
-				AttrPair{
-					SelectAttr(self.NumAttrs, i+1),
-					SelectAttr(self.BarAttrs, i),
-				},
+				NewStyle(
+					SelectColor(self.NumColors, i+1),
+					SelectColor(self.BarColors, i),
+				),
 				image.Pt(numberXCoordinate, self.Inner.Max.Y-2),
 			)
 		}

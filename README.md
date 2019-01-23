@@ -1,6 +1,6 @@
 # termui
 
-<img src="./assets/dashboard1.gif" alt="demo cast under osx 10.10; Terminal.app; Menlo Regular 12pt.)" width="100%">
+<img src="./_assets/dashboard1.gif" alt="demo cast under osx 10.10; Terminal.app; Menlo Regular 12pt.)" width="100%">
 
 termui is a cross-platform, easy-to-compile, and fully-customizable terminal dashboard built on top of [termbox-go](https://github.com/nsf/termbox-go). It is inspired by [blessed-contrib](https://github.com/yaronn/blessed-contrib) and written purely in Go.
 
@@ -53,14 +53,14 @@ func main() {
 
 Click image to see the corresponding demo codes.
 
-[<img src="./assets/barchart.png" alt="barchart" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/barchart.go)
-[<img src="./assets/gauge.png" alt="gauge" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/gauge.go)
-[<img src="./assets/linechart.png" alt="linechart" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/linechart.go)
-[<img src="./assets/list.png" alt="list" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/list.go)
-[<img src="./assets/paragraph.png" alt="paragraph" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/paragraph.go)
-[<img src="./assets/sparkline.png" alt="sparkline" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/sparkline.go)
-[<img src="./assets/stacked_barchart.png" alt="stacked_barchart" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/stacked_barchart.go)
-[<img src="./assets/table.png" alt="table" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/table.go)
+[<img src="./_assets/barchart.png" alt="barchart" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/barchart.go)
+[<img src="./_assets/gauge.png" alt="gauge" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/gauge.go)
+[<img src="./_assets/linechart.png" alt="linechart" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/linechart.go)
+[<img src="./_assets/list.png" alt="list" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/list.go)
+[<img src="./_assets/paragraph.png" alt="paragraph" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/paragraph.go)
+[<img src="./_assets/sparkline.png" alt="sparkline" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/sparkline.go)
+[<img src="./_assets/stacked_barchart.png" alt="stacked_barchart" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/stacked_barchart.go)
+[<img src="./_assets/table.png" alt="table" type="image/png" width="45%">](https://github.com/gizak/termui/blob/master/_examples/table.go)
 
 ### Examples
 

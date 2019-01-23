@@ -20,7 +20,7 @@ type PieChartLabel func(dataIndex int, currentValue float64) string
 type PieChart struct {
 	Block
 	Data   []float64     // list of data items
-	Attrs  []Attribute   // colors to by cycled through
+	Colors []Color       // colors to by cycled through
 	Label  PieChartLabel // callback function for labels
 	Offset float64       // which angle to start drawing at? (see piechartOffsetUp)
 }
@@ -29,7 +29,7 @@ type PieChart struct {
 func NewPieChart() *PieChart {
 	return &PieChart{
 		Block:  *NewBlock(),
-		Attrs:  Theme.PieChart.Slices,
+		Colors: Theme.PieChart.Slices,
 		Offset: piechartOffsetUp,
 	}
 }
@@ -56,7 +56,7 @@ func (self *PieChart) Draw(buf *Buffer) {
 		for j := 0.0; j < size; j += resolutionFactor {
 			borderPoint := borderCircle.at(phi + j)
 			line := line{P1: center, P2: borderPoint}
-			line.draw(Cell{SOLID_BLOCK, AttrPair{SelectAttr(self.Attrs, i), ColorDefault}}, buf)
+			line.draw(NewCell(SOLID_BLOCK, NewStyle(SelectColor(self.Colors, i))), buf)
 		}
 		phi += size
 	}
@@ -71,7 +71,7 @@ func (self *PieChart) Draw(buf *Buffer) {
 			}
 			buf.SetString(
 				self.Label(i, self.Data[i]),
-				AttrPair{SelectAttr(self.Attrs, i), ColorDefault},
+				NewStyle(SelectColor(self.Colors, i)),
 				image.Pt(labelPoint.X, labelPoint.Y),
 			)
 			phi += size
@@ -110,7 +110,7 @@ func (self line) draw(cell Cell, buf *Buffer) {
 		return p1.Y <= p2.Y
 	}
 	p1, p2 := self.P1, self.P2
-	buf.SetCell(Cell{'*', cell.Attrs}, self.P2)
+	buf.SetCell(NewCell('*', cell.Style), self.P2)
 	width, height := self.size()
 	if width > height { // paint left to right
 		if !isLeftOf(p1, p2) {

@@ -93,8 +93,8 @@ func GetMaxFloat64From2dSlice(slices [][]float64) (float64, error) {
 	return max, nil
 }
 
-func SelectAttr(attrs []Attribute, index int) Attribute {
-	return attrs[index%len(attrs)]
+func SelectColor(colors []Color, index int) Color {
+	return colors[index%len(colors)]
 }
 
 func CellsToString(cells []Cell) string {

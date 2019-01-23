@@ -16,8 +16,9 @@ func NewCanvas() *Canvas {
 	}
 }
 
-// given points correspond to dots within a braille character, not cells
-func (self *Canvas) Line(p0, p1 image.Point, attr Attribute) {
+// points given as arguments correspond to dots within a braille character
+// and therefore have 2x4 times the resolution of a normal cell
+func (self *Canvas) Line(p0, p1 image.Point, color Color) {
 	leftPoint, rightPoint := p0, p1
 	if leftPoint.X > rightPoint.X {
 		leftPoint, rightPoint = rightPoint, leftPoint
@@ -39,14 +40,14 @@ func (self *Canvas) Line(p0, p1 image.Point, attr Attribute) {
 			point := image.Pt(i/2, currentYCoordinate/4)
 			self.CellMap[point] = Cell{
 				self.CellMap[point].Rune | BRAILLE[currentYCoordinate%4][i%2],
-				AttrPair{attr, ColorDefault},
+				NewStyle(color),
 			}
 		}
 		for currentYCoordinate != int(targetYCoordinate) {
 			point := image.Pt(i/2, currentYCoordinate/4)
 			self.CellMap[point] = Cell{
 				self.CellMap[point].Rune | BRAILLE[currentYCoordinate%4][i%2],
-				AttrPair{attr, ColorDefault},
+				NewStyle(color),
 			}
 			currentYCoordinate += slopeDirection
 		}
@@ -56,7 +57,7 @@ func (self *Canvas) Line(p0, p1 image.Point, attr Attribute) {
 func (self *Canvas) Draw(buf *Buffer) {
 	for point, cell := range self.CellMap {
 		if point.In(self.Rectangle) {
-			buf.SetCell(Cell{cell.Rune + BRAILLE_OFFSET, cell.Attrs}, point)
+			buf.SetCell(Cell{cell.Rune + BRAILLE_OFFSET, cell.Style}, point)
 		}
 	}
 }

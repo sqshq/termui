@@ -24,8 +24,8 @@ func main() {
 	l.Rows = []string{
 		"[0] github.com/gizak/termui",
 		"[1] [你好，世界](fg-blue)",
-		"[2] [こんにちは世界](fg-red)",
-		"[3] [color output](fg-white,bg-green)",
+		"[2] [こんにちは世界](fg:red)",
+		"[3] [color output](fg:white,bg:green)",
 		"[4] output.go",
 		"[5] random_out.go",
 		"[6] dashboard.go",

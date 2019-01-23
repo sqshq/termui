@@ -14,9 +14,10 @@ import (
 type Sparkline struct {
 	Data       []float64
 	Title      string
-	TitleAttrs AttrPair
-	LineAttr   Attribute
+	TitleStyle Style
+	LineColor  Color
 	MaxVal     float64
+	MaxHeight  int // TODO
 }
 
 // SparklineGroup is a renderable widget which groups together the given sparklines.
@@ -28,8 +29,8 @@ type SparklineGroup struct {
 // NewSparkline returns a unrenderable single sparkline that needs to be added to a SparklineGroup
 func NewSparkline() *Sparkline {
 	return &Sparkline{
-		TitleAttrs: Theme.Sparkline.Title,
-		LineAttr:   Theme.Sparkline.Line,
+		TitleStyle: Theme.Sparkline.Title,
+		LineColor:  Theme.Sparkline.Line,
 	}
 }
 
@@ -68,14 +69,14 @@ func (self *SparklineGroup) Draw(buf *Buffer) {
 			sparkChar := SPARK_CHARS[len(SPARK_CHARS)-1]
 			for k := 0; k < height; k++ {
 				buf.SetCell(
-					Cell{sparkChar, AttrPair{sl.LineAttr, ColorDefault}},
+					NewCell(sparkChar, NewStyle(sl.LineColor)),
 					image.Pt(j+self.Inner.Min.X, self.Inner.Min.Y-1+heightOffset-k),
 				)
 			}
 			if height == 0 {
 				sparkChar = SPARK_CHARS[0]
 				buf.SetCell(
-					Cell{sparkChar, AttrPair{sl.LineAttr, ColorDefault}},
+					NewCell(sparkChar, NewStyle(sl.LineColor)),
 					image.Pt(j+self.Inner.Min.X, self.Inner.Min.Y-1+heightOffset),
 				)
 			}
@@ -85,7 +86,7 @@ func (self *SparklineGroup) Draw(buf *Buffer) {
 			// draw title
 			buf.SetString(
 				TrimString(sl.Title, self.Inner.Dx()),
-				sl.TitleAttrs,
+				sl.TitleStyle,
 				image.Pt(self.Inner.Min.X, self.Inner.Min.Y-1+heightOffset-barHeight),
 			)
 		}

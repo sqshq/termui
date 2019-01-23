@@ -10,7 +10,7 @@ import (
 
 type Block struct {
 	Border       bool
-	BorderAttrs  AttrPair
+	BorderStyle  Style
 	BorderLeft   bool
 	BorderRight  bool
 	BorderTop    bool
@@ -20,20 +20,20 @@ type Block struct {
 	Inner image.Rectangle
 
 	Title      string
-	TitleAttrs AttrPair
+	TitleStyle Style
 }
 
 // NewBlock returns a *Block which inherits styles from current theme.
 func NewBlock() *Block {
 	return &Block{
 		Border:       true,
-		BorderAttrs:  Theme.Block.Border,
+		BorderStyle:  Theme.Block.Border,
 		BorderLeft:   true,
 		BorderRight:  true,
 		BorderTop:    true,
 		BorderBottom: true,
 
-		TitleAttrs: Theme.Block.Title,
+		TitleStyle: Theme.Block.Title,
 	}
 }
 
@@ -42,8 +42,8 @@ func (self *Block) drawBorder(buf *Buffer) {
 		return
 	}
 
-	verticalCell := Cell{VERTICAL_LINE, self.BorderAttrs}
-	horizontalCell := Cell{HORIZONTAL_LINE, self.BorderAttrs}
+	verticalCell := Cell{VERTICAL_LINE, self.BorderStyle}
+	horizontalCell := Cell{HORIZONTAL_LINE, self.BorderStyle}
 
 	// draw lines
 	if self.BorderTop {
@@ -61,16 +61,16 @@ func (self *Block) drawBorder(buf *Buffer) {
 
 	// draw corners
 	if self.BorderTop && self.BorderLeft {
-		buf.SetCell(Cell{TOP_LEFT, self.BorderAttrs}, self.Min)
+		buf.SetCell(Cell{TOP_LEFT, self.BorderStyle}, self.Min)
 	}
 	if self.BorderTop && self.BorderRight {
-		buf.SetCell(Cell{TOP_RIGHT, self.BorderAttrs}, image.Pt(self.Max.X-1, self.Min.Y))
+		buf.SetCell(Cell{TOP_RIGHT, self.BorderStyle}, image.Pt(self.Max.X-1, self.Min.Y))
 	}
 	if self.BorderBottom && self.BorderLeft {
-		buf.SetCell(Cell{BOTTOM_LEFT, self.BorderAttrs}, image.Pt(self.Min.X, self.Max.Y-1))
+		buf.SetCell(Cell{BOTTOM_LEFT, self.BorderStyle}, image.Pt(self.Min.X, self.Max.Y-1))
 	}
 	if self.BorderBottom && self.BorderRight {
-		buf.SetCell(Cell{BOTTOM_RIGHT, self.BorderAttrs}, self.Max.Sub(image.Pt(1, 1)))
+		buf.SetCell(Cell{BOTTOM_RIGHT, self.BorderStyle}, self.Max.Sub(image.Pt(1, 1)))
 	}
 }
 
@@ -78,7 +78,7 @@ func (self *Block) Draw(buf *Buffer) {
 	self.drawBorder(buf)
 	buf.SetString(
 		self.Title,
-		self.TitleAttrs,
+		self.TitleStyle,
 		image.Pt(self.Min.X+2, self.Min.Y),
 	)
 }

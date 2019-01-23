@@ -13,13 +13,13 @@ import (
 type Paragraph struct {
 	Block
 	Text      string
-	TextAttrs AttrPair
+	TextStyle Style
 }
 
 func NewParagraph() *Paragraph {
 	return &Paragraph{
 		Block:     *NewBlock(),
-		TextAttrs: Theme.Paragraph.Text,
+		TextStyle: Theme.Paragraph.Text,
 	}
 }
 
@@ -27,7 +27,7 @@ func (self *Paragraph) Draw(buf *Buffer) {
 	self.Block.Draw(buf)
 
 	point := self.Inner.Min
-	cells := WrapText(ParseText(self.Text, self.TextAttrs), self.Inner.Dx())
+	cells := WrapText(ParseText(self.Text, self.TextStyle), self.Inner.Dx())
 
 	for i := 0; i < len(cells) && point.Y < self.Inner.Max.Y; i++ {
 		if cells[i].Rune == '\n' {

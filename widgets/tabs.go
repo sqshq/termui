@@ -14,16 +14,16 @@ type TabPane struct {
 	Block
 	TabNames         []string
 	ActiveTabIndex   int
-	ActiveTabAttrs   AttrPair
-	InactiveTabAttrs AttrPair
+	ActiveTabStyle   Style
+	InactiveTabStyle Style
 }
 
 func NewTabPane(names ...string) *TabPane {
 	return &TabPane{
 		Block:            *NewBlock(),
 		TabNames:         names,
-		ActiveTabAttrs:   Theme.Tab.Active,
-		InactiveTabAttrs: Theme.Tab.Inactive,
+		ActiveTabStyle:   Theme.Tab.Active,
+		InactiveTabStyle: Theme.Tab.Inactive,
 	}
 }
 
@@ -44,9 +44,9 @@ func (self *TabPane) Draw(buf *Buffer) {
 
 	xCoordinate := self.Inner.Min.X
 	for i, name := range self.TabNames {
-		attrPair := self.InactiveTabAttrs
+		attrPair := self.InactiveTabStyle
 		if i == self.ActiveTabIndex {
-			attrPair = self.ActiveTabAttrs
+			attrPair = self.ActiveTabStyle
 		}
 		buf.SetString(
 			TrimString(name, self.Inner.Max.X-xCoordinate),
@@ -58,7 +58,7 @@ func (self *TabPane) Draw(buf *Buffer) {
 
 		if i < len(self.TabNames)-1 && xCoordinate < self.Inner.Max.X {
 			buf.SetCell(
-				Cell{VERTICAL_LINE, AttrPair{ColorWhite, ColorDefault}},
+				NewCell(VERTICAL_LINE, NewStyle(ColorWhite)),
 				image.Pt(xCoordinate, self.Inner.Min.Y),
 			)
 		}

@@ -4,7 +4,7 @@
 
 package termui
 
-var StandardColors = []Attribute{
+var StandardColors = []Color{
 	ColorRed,
 	ColorGreen,
 	ColorYellow,
@@ -15,7 +15,7 @@ var StandardColors = []Attribute{
 }
 
 type RootTheme struct {
-	Default AttrPair
+	Default Style
 
 	Block BlockTheme
 
@@ -32,64 +32,64 @@ type RootTheme struct {
 }
 
 type BlockTheme struct {
-	Title  AttrPair
-	Border AttrPair
+	Title  Style
+	Border Style
 }
 
 type BarChartTheme struct {
-	Bars   []Attribute
-	Nums   []Attribute
-	Labels []Attribute
+	Bars   []Color
+	Nums   []Color
+	Labels []Color
 }
 
 type GaugeTheme struct {
-	Percent Attribute
-	Bar     Attribute
+	Percent Color
+	Bar     Color
 }
 
 type LineChartTheme struct {
-	Lines []Attribute
-	Axes  Attribute
+	Lines []Color
+	Axes  Color
 }
 
 type ListTheme struct {
-	Text AttrPair
+	Text Style
 }
 
 type ParagraphTheme struct {
-	Text AttrPair
+	Text Style
 }
 
 type PieChartTheme struct {
-	Slices []Attribute
+	Slices []Color
 }
 
 type SparklineTheme struct {
-	Title AttrPair
-	Line  Attribute
+	Title Style
+	Line  Color
 }
 
 type StackedBarChartTheme struct {
-	Bars   []Attribute
-	Nums   []Attribute
-	Labels []Attribute
+	Bars   []Color
+	Nums   []Color
+	Labels []Color
 }
 
 type TabTheme struct {
-	Active   AttrPair
-	Inactive AttrPair
+	Active   Style
+	Inactive Style
 }
 
 type TableTheme struct {
-	Text AttrPair
+	Text Style
 }
 
 var Theme = RootTheme{
-	Default: AttrPair{7, -1},
+	Default: NewStyle(ColorWhite),
 
 	Block: BlockTheme{
-		Title:  AttrPair{7, -1},
-		Border: AttrPair{6, -1},
+		Title:  NewStyle(ColorWhite),
+		Border: NewStyle(ColorWhite),
 	},
 
 	BarChart: BarChartTheme{
@@ -99,7 +99,7 @@ var Theme = RootTheme{
 	},
 
 	Paragraph: ParagraphTheme{
-		Text: AttrPair{ColorWhite, -1},
+		Text: NewStyle(ColorWhite),
 	},
 
 	PieChart: PieChartTheme{
@@ -107,7 +107,7 @@ var Theme = RootTheme{
 	},
 
 	List: ListTheme{
-		Text: AttrPair{1, -1},
+		Text: NewStyle(ColorWhite),
 	},
 
 	StackedBarChart: StackedBarChartTheme{
@@ -122,11 +122,8 @@ var Theme = RootTheme{
 	},
 
 	Sparkline: SparklineTheme{
-		Line: ColorBlack,
-		Title: AttrPair{
-			Fg: ColorBlue,
-			Bg: ColorDefault,
-		},
+		Line:  ColorBlack,
+		Title: NewStyle(ColorBlue),
 	},
 
 	LineChart: LineChartTheme{
@@ -135,11 +132,11 @@ var Theme = RootTheme{
 	},
 
 	Table: TableTheme{
-		Text: AttrPair{4, -1},
+		Text: NewStyle(ColorWhite),
 	},
 
 	Tab: TabTheme{
-		Active:   AttrPair{ColorRed, ColorDefault},
-		Inactive: AttrPair{ColorWhite, ColorDefault},
+		Active:   NewStyle(ColorRed),
+		Inactive: NewStyle(ColorWhite),
 	},
 }

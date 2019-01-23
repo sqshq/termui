@@ -13,17 +13,17 @@ import (
 
 type Gauge struct {
 	Block
-	Percent     int
-	BarAttr     Attribute
-	PercentAttr Attribute
-	Label       string
+	Percent      int
+	BarColor     Color
+	PercentColor Color
+	Label        string
 }
 
 func NewGauge() *Gauge {
 	return &Gauge{
-		Block:       *NewBlock(),
-		BarAttr:     Theme.Gauge.Bar,
-		PercentAttr: Theme.Gauge.Percent,
+		Block:        *NewBlock(),
+		BarColor:     Theme.Gauge.Bar,
+		PercentColor: Theme.Gauge.Percent,
 	}
 }
 
@@ -38,7 +38,7 @@ func (self *Gauge) Draw(buf *Buffer) {
 	// plot bar
 	barWidth := int((float64(self.Percent) / 100) * float64(self.Inner.Dx()))
 	buf.Fill(
-		Cell{' ', AttrPair{ColorDefault, self.BarAttr}},
+		NewCell(' ', NewStyle(ColorClear, self.BarColor)),
 		image.Rect(self.Inner.Min.X, self.Inner.Min.Y, self.Inner.Min.X+barWidth, self.Inner.Max.Y),
 	)
 
@@ -47,11 +47,11 @@ func (self *Gauge) Draw(buf *Buffer) {
 	labelYCoordinate := self.Inner.Min.Y + ((self.Inner.Dy() - 1) / 2)
 	if labelYCoordinate < self.Inner.Max.Y {
 		for i, char := range label {
-			attrs := AttrPair{self.PercentAttr, ColorDefault}
+			attrs := NewStyle(self.PercentColor)
 			if labelXCoordinate+i+1 <= self.Inner.Min.X+barWidth {
-				attrs = AttrPair{self.BarAttr, AttrReverse}
+				attrs = NewStyle(self.BarColor, ColorClear, ModifierReverse)
 			}
-			buf.SetCell(Cell{char, attrs}, image.Pt(labelXCoordinate+i, labelYCoordinate))
+			buf.SetCell(NewCell(char, attrs), image.Pt(labelXCoordinate+i, labelYCoordinate))
 		}
 	}
 }

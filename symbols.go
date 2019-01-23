@@ -1,13 +1,13 @@
 package termui
 
 const (
-	SOLID_BLOCK = '░'
+	SHADED_BLOCK = '░'
 	DOT         = '•'
 	DOTS        = '…'
 )
 
 var (
-	BAR_RUNES = []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
+	BARS = []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
 
 	BRAILLE_OFFSET = '\u2800'
 	BRAILLE        = [4][2]rune{

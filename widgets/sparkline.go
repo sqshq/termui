@@ -66,7 +66,7 @@ func (self *SparklineGroup) Draw(buf *Buffer) {
 		for j := 0; j < len(sl.Data) && j < self.Inner.Dx(); j++ {
 			data := sl.Data[j]
 			height := int((data / maxVal) * float64(barHeight))
-			sparkChar := BAR_RUNES[len(BAR_RUNES)-1]
+			sparkChar := BARS[len(BARS)-1]
 			for k := 0; k < height; k++ {
 				buf.SetCell(
 					NewCell(sparkChar, NewStyle(sl.LineColor)),
@@ -74,7 +74,7 @@ func (self *SparklineGroup) Draw(buf *Buffer) {
 				)
 			}
 			if height == 0 {
-				sparkChar = BAR_RUNES[0]
+				sparkChar = BARS[0]
 				buf.SetCell(
 					NewCell(sparkChar, NewStyle(sl.LineColor)),
 					image.Pt(j+self.Inner.Min.X, self.Inner.Min.Y-1+heightOffset),

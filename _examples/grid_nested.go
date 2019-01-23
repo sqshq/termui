@@ -15,7 +15,7 @@ func main() {
 	defer ui.Close()
 
 	grid := ui.NewGrid()
-	termWidth, termHeight := ui.TerminalSize()
+	termWidth, termHeight := ui.TerminalDimensions()
 	grid.SetRect(0, 0, termWidth, termHeight)
 
 	grid2 := ui.NewGrid()

@@ -32,16 +32,16 @@ func main() {
 	g2.Title = "Slim Gauge"
 	g2.SetRect(0, 3, 50, 6)
 	g2.Percent = 60
-	g2.PercentColor = ui.ColorBlue
 	g2.BarColor = ui.ColorYellow
+	g2.LabelStyle = ui.NewStyle(ui.ColorBlue)
 	g2.BorderStyle.Fg = ui.ColorWhite
 
 	g1 := widgets.NewGauge()
 	g1.Title = "Big Gauge"
 	g1.SetRect(0, 6, 50, 11)
 	g1.Percent = 30
-	g1.PercentColor = ui.ColorYellow
 	g1.BarColor = ui.ColorGreen
+	g1.LabelStyle = ui.NewStyle(ui.ColorYellow)
 	g1.TitleStyle.Fg = ui.ColorMagenta
 	g1.BorderStyle.Fg = ui.ColorWhite
 
@@ -56,8 +56,8 @@ func main() {
 	g4.SetRect(0, 14, 50, 17)
 	g4.Percent = 50
 	g4.Label = "Gauge with custom highlighted label"
-	g4.PercentColor = ui.ColorYellow
 	g4.BarColor = ui.ColorGreen
+	g4.LabelStyle = ui.NewStyle(ui.ColorYellow)
 
 	ui.Render(g0, g1, g2, g3, g4)
 

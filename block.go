@@ -8,6 +8,9 @@ import (
 	"image"
 )
 
+// Block is the base struct inherited by all widgets.
+// Block manages size, border, and title.
+// It implements 2 of the 3 methods needed for `Drawable` interface: `GetRect` and `SetRect`.
 type Block struct {
 	Border       bool
 	BorderStyle  Style
@@ -23,7 +26,6 @@ type Block struct {
 	TitleStyle Style
 }
 
-// NewBlock returns a *Block which inherits styles from current theme.
 func NewBlock() *Block {
 	return &Block{
 		Border:       true,

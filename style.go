@@ -38,6 +38,10 @@ var StyleClear = Style{
 	Modifier: ModifierClear,
 }
 
+// NewStyle takes 1 to 3 arguments.
+// 1st argument = Fg
+// 2nd argument = optional Bg
+// 3rd argument = optional Modifier
 func NewStyle(fg Color, args ...interface{}) Style {
 	bg := ColorClear
 	modifier := ModifierClear

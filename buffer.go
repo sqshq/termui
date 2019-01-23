@@ -19,6 +19,9 @@ var CellClear = Cell{
 	Style: StyleClear,
 }
 
+// NewCell takes 1 to 2 arguments
+// 1st argument = rune
+// 2nd argument = optional style
 func NewCell(rune rune, args ...interface{}) Cell {
 	style := StyleClear
 	if len(args) == 1 {
@@ -30,7 +33,7 @@ func NewCell(rune rune, args ...interface{}) Cell {
 	}
 }
 
-// Buffer represents a section of a terminal and is a renderable rectangle of cells
+// Buffer represents a section of a terminal and is a renderable rectangle of cells.
 type Buffer struct {
 	image.Rectangle
 	CellMap map[image.Point]Cell

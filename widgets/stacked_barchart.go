@@ -16,8 +16,8 @@ import (
 type StackedBarChart struct {
 	Block
 	BarColors   []Color
-	LabelColors []Color
-	NumColors   []Color
+	LabelStyles []Style
+	NumStyles   []Style // only Fg and Modifier are used
 	NumFmt      func(float64) string
 	Data        [][]float64
 	Labels      []string
@@ -30,8 +30,8 @@ func NewStackedBarChart() *StackedBarChart {
 	return &StackedBarChart{
 		Block:       *NewBlock(),
 		BarColors:   Theme.StackedBarChart.Bars,
-		LabelColors: Theme.StackedBarChart.Labels,
-		NumColors:   Theme.StackedBarChart.Nums,
+		LabelStyles: Theme.StackedBarChart.Labels,
+		NumStyles:   Theme.StackedBarChart.Nums,
 		NumFmt:      func(n float64) string { return fmt.Sprint(n) },
 		BarGap:      1,
 		BarWidth:    3,
@@ -68,8 +68,9 @@ func (self *StackedBarChart) Draw(buf *Buffer) {
 			buf.SetString(
 				self.NumFmt(data),
 				NewStyle(
-					SelectColor(self.NumColors, j+1),
+					SelectStyle(self.NumStyles, j+1).Fg,
 					SelectColor(self.BarColors, j),
+					SelectStyle(self.NumStyles, j+1).Modifier,
 				),
 				image.Pt(numberXCoordinate, (self.Inner.Max.Y-2)-stackedBarYCoordinate),
 			)
@@ -84,7 +85,7 @@ func (self *StackedBarChart) Draw(buf *Buffer) {
 		)
 		buf.SetString(
 			TrimString(self.Labels[i], self.BarWidth),
-			NewStyle(SelectColor(self.LabelColors, i)),
+			SelectStyle(self.LabelStyles, i),
 			image.Pt(labelXCoordinate, self.Inner.Max.Y-1),
 		)
 

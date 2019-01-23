@@ -104,7 +104,7 @@ func main() {
 	bc.SetRect(50, 0, 75, 10)
 	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
 	bc.BarColors[0] = ui.ColorGreen
-	bc.NumColors[0] = ui.ColorBlack
+	bc.NumStyles[0] = ui.NewStyle(ui.ColorBlack)
 
 	lc2 := widgets.NewLineChart()
 	lc2.Title = "braille-mode Line Chart"

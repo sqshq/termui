@@ -19,8 +19,8 @@ const (
 	tokenBeginStyledText = '['
 	tokenEndStyledText   = ']'
 
-	tokenBeginStyleItems = '('
-	tokenEndStyleItems   = ')'
+	tokenBeginStyle = '('
+	tokenEndStyle   = ')'
 )
 
 type parserState uint
@@ -54,8 +54,8 @@ func AddColorMap(str string, color Color) {
 	colorMap[str] = color
 }
 
-// readColoributes translates an []rune like `fg:red,mod:bold,bg:white` to a style
-func readColoributes(runes []rune, defaultStyle Style) Style {
+// readStyle translates an []rune like `fg:red,mod:bold,bg:white` to a style
+func readStyle(runes []rune, defaultStyle Style) Style {
 	style := defaultStyle
 	split := strings.Split(string(runes), tokenItemSeparator)
 	for _, item := range split {
@@ -114,7 +114,7 @@ func ParseText(s string, defaultStyle Style) []Cell {
 			switch {
 			case squareCount == 0:
 				switch _rune {
-				case tokenBeginStyleItems:
+				case tokenBeginStyle:
 					state = parserStateStyleItems
 					styleItems = append(styleItems, _rune)
 				default:
@@ -128,7 +128,6 @@ func ParseText(s string, defaultStyle Style) []Cell {
 						cells = append(cells, Cell{_rune, defaultStyle})
 					}
 				}
-			// hit the end
 			case len(runes) == i+1:
 				rollback()
 				styledText = append(styledText, _rune)
@@ -138,14 +137,13 @@ func ParseText(s string, defaultStyle Style) []Cell {
 			case _rune == tokenEndStyledText:
 				squareCount--
 				styledText = append(styledText, _rune)
-			// normal rune
 			default:
 				styledText = append(styledText, _rune)
 			}
 		case parserStateStyleItems:
 			styleItems = append(styleItems, _rune)
-			if _rune == tokenEndStyleItems {
-				style := readColoributes(chop(styleItems), defaultStyle)
+			if _rune == tokenEndStyle {
+				style := readStyle(chop(styleItems), defaultStyle)
 				cells = append(cells, RunesToStyledCells(chop(styledText), style)...)
 				reset()
 			} else if len(runes) == i+1 {

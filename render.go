@@ -32,7 +32,3 @@ func Render(items ...Drawable) {
 	}
 	tb.Flush()
 }
-
-func Clear() {
-	tb.Clear(tb.ColorDefault, tb.Attribute(Theme.Default.Bg+1))
-}

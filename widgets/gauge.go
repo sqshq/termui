@@ -13,17 +13,17 @@ import (
 
 type Gauge struct {
 	Block
-	Percent      int
-	BarColor     Color
-	PercentColor Color
-	Label        string
+	Percent    int
+	BarColor   Color
+	Label      string
+	LabelStyle Style
 }
 
 func NewGauge() *Gauge {
 	return &Gauge{
-		Block:        *NewBlock(),
-		BarColor:     Theme.Gauge.Bar,
-		PercentColor: Theme.Gauge.Percent,
+		Block:      *NewBlock(),
+		BarColor:   Theme.Gauge.Bar,
+		LabelStyle: Theme.Gauge.Label,
 	}
 }
 
@@ -47,7 +47,7 @@ func (self *Gauge) Draw(buf *Buffer) {
 	labelYCoordinate := self.Inner.Min.Y + ((self.Inner.Dy() - 1) / 2)
 	if labelYCoordinate < self.Inner.Max.Y {
 		for i, char := range label {
-			style := NewStyle(self.PercentColor)
+			style := self.LabelStyle
 			if labelXCoordinate+i+1 <= self.Inner.Min.X+barWidth {
 				style = NewStyle(self.BarColor, ColorClear, ModifierReverse)
 			}

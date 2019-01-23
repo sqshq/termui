@@ -98,6 +98,10 @@ func SelectColor(colors []Color, index int) Color {
 	return colors[index%len(colors)]
 }
 
+func SelectStyle(styles []Style, index int) Style {
+	return styles[index%len(styles)]
+}
+
 func CellsToString(cells []Cell) string {
 	runes := make([]rune, len(cells))
 	for i, cell := range cells {

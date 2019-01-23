@@ -22,7 +22,7 @@ type LineChart struct {
 	LineType        LineType
 	DotChar         rune
 	LineColors      []Color
-	AxesColor       Color
+	AxesColor       Color // TODO
 	MaxVal          float64
 	ShowAxes        bool
 	DrawDirection   DrawDirection // TODO

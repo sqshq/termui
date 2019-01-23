@@ -25,9 +25,9 @@ func main() {
 	bc.Title = "Bar Chart"
 	bc.SetRect(5, 5, 100, 25)
 	bc.BarWidth = 5
-	bc.LabelColors = []ui.Color{ui.ColorBlue}
 	bc.BarColors = []ui.Color{ui.ColorRed, ui.ColorGreen}
-	bc.NumColors = []ui.Color{ui.ColorYellow}
+	bc.LabelStyles = []ui.Style{ui.NewStyle(ui.ColorBlue)}
+	bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorYellow)}
 
 	ui.Render(bc)
 

@@ -10,10 +10,13 @@ import (
 	. "github.com/gizak/termui"
 )
 
+// TabPane is a renderable widget which can be used to conditionally render certain tabs/views.
+// TabPane shows a list of Tab names.
+// The currently selected tab can be found through the `ActiveTabIndex` field.
 type TabPane struct {
 	Block
 	TabNames         []string
-	ActiveTabIndex   int
+	ActiveTabIndex   uint
 	ActiveTabStyle   Style
 	InactiveTabStyle Style
 }
@@ -34,7 +37,7 @@ func (self *TabPane) FocusLeft() {
 }
 
 func (self *TabPane) FocusRight() {
-	if self.ActiveTabIndex < len(self.TabNames)-1 {
+	if self.ActiveTabIndex < uint(len(self.TabNames)-1) {
 		self.ActiveTabIndex++
 	}
 }
@@ -45,7 +48,7 @@ func (self *TabPane) Draw(buf *Buffer) {
 	xCoordinate := self.Inner.Min.X
 	for i, name := range self.TabNames {
 		ColorPair := self.InactiveTabStyle
-		if i == self.ActiveTabIndex {
+		if uint(i) == self.ActiveTabIndex {
 			ColorPair = self.ActiveTabStyle
 		}
 		buf.SetString(

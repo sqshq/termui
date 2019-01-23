@@ -4,7 +4,7 @@
 
 package termui
 
-type gridItemType int
+type gridItemType uint
 
 const (
 	col gridItemType = 0
@@ -66,7 +66,8 @@ func NewRow(ratio float64, i ...interface{}) GridItem {
 	}
 }
 
-// Set recursively searches the GridItems, adding leaves to the grid and calculating the dimensions of the leaves.
+// Set is used to add Columns and Rows to the grid.
+// It recursively searches the GridItems, adding leaves to the grid and calculating the dimensions of the leaves.
 func (self *Grid) Set(entries ...interface{}) {
 	entry := GridItem{
 		Type:   row,

@@ -14,6 +14,16 @@ var StandardColors = []Color{
 	ColorWhite,
 }
 
+var StandardStyles = []Style{
+	NewStyle(ColorRed),
+	NewStyle(ColorGreen),
+	NewStyle(ColorYellow),
+	NewStyle(ColorBlue),
+	NewStyle(ColorMagenta),
+	NewStyle(ColorCyan),
+	NewStyle(ColorWhite),
+}
+
 type RootTheme struct {
 	Default Style
 
@@ -38,13 +48,13 @@ type BlockTheme struct {
 
 type BarChartTheme struct {
 	Bars   []Color
-	Nums   []Color
-	Labels []Color
+	Nums   []Style
+	Labels []Style
 }
 
 type GaugeTheme struct {
-	Percent Color
-	Bar     Color
+	Bar   Color
+	Label Style
 }
 
 type LineChartTheme struct {
@@ -71,8 +81,8 @@ type SparklineTheme struct {
 
 type StackedBarChartTheme struct {
 	Bars   []Color
-	Nums   []Color
-	Labels []Color
+	Nums   []Style
+	Labels []Style
 }
 
 type TabTheme struct {
@@ -94,8 +104,8 @@ var Theme = RootTheme{
 
 	BarChart: BarChartTheme{
 		Bars:   StandardColors,
-		Nums:   StandardColors,
-		Labels: StandardColors,
+		Nums:   StandardStyles,
+		Labels: StandardStyles,
 	},
 
 	Paragraph: ParagraphTheme{
@@ -112,13 +122,13 @@ var Theme = RootTheme{
 
 	StackedBarChart: StackedBarChartTheme{
 		Bars:   StandardColors,
-		Nums:   StandardColors,
-		Labels: StandardColors,
+		Nums:   StandardStyles,
+		Labels: StandardStyles,
 	},
 
 	Gauge: GaugeTheme{
-		Percent: ColorWhite,
-		Bar:     ColorWhite,
+		Bar:   ColorWhite,
+		Label: NewStyle(ColorWhite),
 	},
 
 	Sparkline: SparklineTheme{

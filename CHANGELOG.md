@@ -17,7 +17,7 @@ Feel free to search/open an issue if something is missing or confusing from the 
     - `Draw` takes a `Buffer` and draws to it instead of returning a new `Buffer`
 - Refactored `Theme`
   - `Theme` is now a large struct which holds the default `Styles` of everything
-- Combined `TermWidth` and `TermHeight` functions into `TerminalSize`
+- Combined `TermWidth` and `TermHeight` functions into `TerminalDimensions`
 - Added `Canvas` which allows for drawing braille lines to a `Buffer`
 - Refactored `Block`
 - Refactored `Buffer` methods

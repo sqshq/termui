@@ -69,7 +69,7 @@ func main() {
 	p.Title = "Demonstration"
 
 	grid := ui.NewGrid()
-	termWidth, termHeight := ui.TerminalSize()
+	termWidth, termHeight := ui.TerminalDimensions()
 	grid.SetRect(0, 0, termWidth, termHeight)
 
 	grid.Set(

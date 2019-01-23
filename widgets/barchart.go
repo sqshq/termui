@@ -16,8 +16,8 @@ import (
 type BarChart struct {
 	Block
 	BarColors   []Color
-	LabelColors []Color
-	NumColors   []Color
+	LabelStyles []Style
+	NumStyles   []Style // only Fg and Modifier are used
 	NumFmt      func(float64) string
 	Data        []float64
 	Labels      []string
@@ -30,8 +30,8 @@ func NewBarChart() *BarChart {
 	return &BarChart{
 		Block:       *NewBlock(),
 		BarColors:   Theme.BarChart.Bars,
-		NumColors:   Theme.BarChart.Nums,
-		LabelColors: Theme.BarChart.Labels,
+		NumStyles:   Theme.BarChart.Nums,
+		LabelStyles: Theme.BarChart.Labels,
 		NumFmt:      func(n float64) string { return fmt.Sprint(n) },
 		BarGap:      1,
 		BarWidth:    3,
@@ -65,7 +65,7 @@ func (self *BarChart) Draw(buf *Buffer) {
 				int((float64(rw.StringWidth(self.Labels[i])) / 2))
 			buf.SetString(
 				self.Labels[i],
-				NewStyle(SelectColor(self.LabelColors, i)),
+				SelectStyle(self.LabelStyles, i),
 				image.Pt(labelXCoordinate, self.Inner.Max.Y-1),
 			)
 		}
@@ -76,8 +76,9 @@ func (self *BarChart) Draw(buf *Buffer) {
 			buf.SetString(
 				self.NumFmt(data),
 				NewStyle(
-					SelectColor(self.NumColors, i+1),
+					SelectStyle(self.NumStyles, i+1).Fg,
 					SelectColor(self.BarColors, i),
+					SelectStyle(self.NumStyles, i+1).Modifier,
 				),
 				image.Pt(numberXCoordinate, self.Inner.Max.Y-2),
 			)

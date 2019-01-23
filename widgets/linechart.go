@@ -42,7 +42,7 @@ const (
 	DotLine
 )
 
-type DrawDirection int
+type DrawDirection uint
 
 const (
 	DrawLeft DrawDirection = iota
@@ -111,7 +111,7 @@ func (self *LineChart) plotAxes(buf *Buffer, maxVal float64) {
 	// draw x axis line
 	for i := yAxisLabelsWidth + 1; i < self.Inner.Dx(); i++ {
 		buf.SetCell(
-			Cell{HORIZONTAL_DASH, NewStyle(ColorWhite)},
+			NewCell(HORIZONTAL_DASH, NewStyle(ColorWhite)),
 			image.Pt(i+self.Inner.Min.X, self.Inner.Max.Y-xAxisLabelsHeight-1),
 		)
 	}

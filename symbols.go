@@ -7,7 +7,7 @@ const (
 )
 
 var (
-	SPARK_CHARS = []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
+	BAR_RUNES = []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
 
 	BRAILLE_OFFSET = '\u2800'
 	BRAILLE        = [4][2]rune{

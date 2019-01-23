@@ -23,13 +23,13 @@ func main() {
 	header.Text = "Press q to quit, Press h or l to switch tabs"
 	header.SetRect(0, 0, 50, 1)
 	header.Border = false
-	header.TextAttrs.Bg = ui.ColorBlue
+	header.TextStyle.Bg = ui.ColorBlue
 
 	p2 := widgets.NewParagraph()
 	p2.Text = "Press q to quit\nPress h or l to switch tabs\n"
 	p2.Title = "Keys"
 	p2.SetRect(5, 5, 40, 15)
-	p2.BorderAttrs.Fg = ui.ColorYellow
+	p2.BorderStyle.Fg = ui.ColorYellow
 
 	bc := widgets.NewBarChart()
 	bc.Title = "Bar Chart"

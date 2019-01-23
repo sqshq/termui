@@ -32,8 +32,8 @@ func main() {
 
 	sl := widgets.NewSparkline()
 	sl.Data = sinFloat64[:100]
-	sl.LineAttr = ui.ColorCyan
-	sl.TitleAttrs.Fg = ui.ColorWhite
+	sl.LineColor = ui.ColorCyan
+	sl.TitleStyle.Fg = ui.ColorWhite
 
 	slg := widgets.NewSparklineGroup(sl)
 	slg.Title = "Sparkline"
@@ -41,14 +41,14 @@ func main() {
 	lc := widgets.NewLineChart()
 	lc.Title = "braille-mode Line Chart"
 	lc.Data = append(lc.Data, sinFloat64)
-	lc.AxesAttr = ui.ColorWhite
-	lc.LineAttrs[0] = ui.ColorYellow | ui.AttrBold
+	lc.AxesColor = ui.ColorWhite
+	lc.LineColors[0] = ui.ColorYellow
 
 	gs := make([]*widgets.Gauge, 3)
 	for i := range gs {
 		gs[i] = widgets.NewGauge()
 		gs[i].Percent = i * 10
-		gs[i].BarAttr = ui.ColorRed
+		gs[i].BarColor = ui.ColorRed
 	}
 
 	ls := widgets.NewList()

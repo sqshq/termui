@@ -32,7 +32,7 @@ func (self *List) Draw(buf *Buffer) {
 	for row := 0; row < len(self.Rows) && point.Y < self.Inner.Max.Y; row++ {
 		cells := ParseText(self.Rows[row], self.TextStyle)
 		if self.Wrap {
-			cells = WrapText(cells, self.Inner.Dx())
+			cells = WrapCells(cells, uint(self.Inner.Dx()))
 		}
 		for j := 0; j < len(cells) && point.Y < self.Inner.Max.Y; j++ {
 			if cells[j].Rune == '\n' {

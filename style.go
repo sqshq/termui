@@ -5,24 +5,24 @@ type Color int
 
 // Basic terminal colors
 const (
-	ColorClear Color = iota - 1
-	ColorBlack
-	ColorRed
-	ColorGreen
-	ColorYellow
-	ColorBlue
-	ColorMagenta
-	ColorCyan
-	ColorWhite
+	ColorClear   Color = -1
+	ColorBlack   Color = 0
+	ColorRed     Color = 1
+	ColorGreen   Color = 2
+	ColorYellow  Color = 3
+	ColorBlue    Color = 4
+	ColorMagenta Color = 5
+	ColorCyan    Color = 6
+	ColorWhite   Color = 7
 )
 
 type Modifier uint
 
 const (
-	ModifierClear Modifier = 0
-	ModifierBold  Modifier = 1 << (iota + 9)
-	ModifierUnderline
-	ModifierReverse
+	ModifierClear     Modifier = 0
+	ModifierBold      Modifier = 1 << 9
+	ModifierUnderline Modifier = 1 << 10
+	ModifierReverse   Modifier = 1 << 11
 )
 
 // Style represents the look of the text of one terminal cell
@@ -33,9 +33,9 @@ type Style struct {
 }
 
 var StyleClear = Style{
-	Fg:       -1,
-	Bg:       -1,
-	Modifier: 0,
+	Fg:       ColorClear,
+	Bg:       ColorClear,
+	Modifier: ModifierClear,
 }
 
 func NewStyle(fg Color, args ...interface{}) Style {
@@ -44,7 +44,7 @@ func NewStyle(fg Color, args ...interface{}) Style {
 	if len(args) >= 1 {
 		bg = args[0].(Color)
 	}
-	if len(args) >= 2 {
+	if len(args) == 2 {
 		modifier = args[1].(Modifier)
 	}
 	return Style{

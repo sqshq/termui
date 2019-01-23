@@ -10,6 +10,7 @@ import (
 	"reflect"
 
 	rw "github.com/mattn/go-runewidth"
+	wordwrap "github.com/mitchellh/go-wordwrap"
 )
 
 // https://stackoverflow.com/questions/12753805/type-converting-slices-of-interfaces-in-go
@@ -144,4 +145,28 @@ func MaxFloat64(x, y float64) float64 {
 		return x
 	}
 	return y
+}
+
+func WrapCells(cells []Cell, width uint) []Cell {
+	str := CellsToString(cells)
+	wrapped := wordwrap.WrapString(str, width)
+	wrappedCells := []Cell{}
+	i := 0
+	for _, _rune := range wrapped {
+		if _rune == '\n' {
+			wrappedCells = append(wrappedCells, Cell{_rune, StyleClear})
+		} else {
+			wrappedCells = append(wrappedCells, Cell{_rune, cells[i].Style})
+		}
+		i++
+	}
+	return wrappedCells
+}
+
+func RunesToStyledCells(runes []rune, style Style) []Cell {
+	cells := []Cell{}
+	for _, _rune := range runes {
+		cells = append(cells, Cell{_rune, style})
+	}
+	return cells
 }

@@ -6,8 +6,6 @@ package termui
 
 import (
 	"strings"
-
-	wordwrap "github.com/mitchellh/go-wordwrap"
 )
 
 const (
@@ -51,13 +49,13 @@ var modifierMap = map[string]Modifier{
 	"reverse":   ModifierReverse,
 }
 
-// AddColorMap allows users to add/override the string to attribute mapping
+// AddColorMap allows users to add/override the string to Coloribute mapping
 func AddColorMap(str string, color Color) {
 	colorMap[str] = color
 }
 
-// readAttributes translates an []rune like `fg:red,mod:bold,bg:white` to a style
-func readAttributes(runes []rune, defaultStyle Style) Style {
+// readColoributes translates an []rune like `fg:red,mod:bold,bg:white` to a style
+func readColoributes(runes []rune, defaultStyle Style) Style {
 	style := defaultStyle
 	split := strings.Split(string(runes), tokenItemSeparator)
 	for _, item := range split {
@@ -84,14 +82,6 @@ func ParseText(s string, defaultStyle Style) []Cell {
 	styleItems := []rune{}
 	squareCount := 0
 
-	runesToStyledCells := func(runes []rune, style Style) []Cell {
-		_cells := []Cell{}
-		for _, _rune := range runes {
-			_cells = append(_cells, Cell{_rune, style})
-		}
-		return _cells
-	}
-
 	reset := func() {
 		styledText = []rune{}
 		styleItems = []rune{}
@@ -100,8 +90,8 @@ func ParseText(s string, defaultStyle Style) []Cell {
 	}
 
 	rollback := func() {
-		cells = append(cells, runesToStyledCells(styledText, defaultStyle)...)
-		cells = append(cells, runesToStyledCells(styleItems, defaultStyle)...)
+		cells = append(cells, RunesToStyledCells(styledText, defaultStyle)...)
+		cells = append(cells, RunesToStyledCells(styleItems, defaultStyle)...)
 		reset()
 	}
 
@@ -116,7 +106,7 @@ func ParseText(s string, defaultStyle Style) []Cell {
 			if _rune == tokenBeginStyledText {
 				state = parserStateStyledText
 				squareCount = 1
-				styledText = append(styledText, tokenBeginStyledText)
+				styledText = append(styledText, _rune)
 			} else {
 				cells = append(cells, Cell{_rune, defaultStyle})
 			}
@@ -140,8 +130,8 @@ func ParseText(s string, defaultStyle Style) []Cell {
 				}
 			// hit the end
 			case len(runes) == i+1:
-				styledText = append(styledText, _rune)
 				rollback()
+				styledText = append(styledText, _rune)
 			case _rune == tokenBeginStyledText:
 				squareCount++
 				styledText = append(styledText, _rune)
@@ -155,8 +145,8 @@ func ParseText(s string, defaultStyle Style) []Cell {
 		case parserStateStyleItems:
 			styleItems = append(styleItems, _rune)
 			if _rune == tokenEndStyleItems {
-				style := readAttributes(chop(styleItems), defaultStyle)
-				cells = append(cells, runesToStyledCells(chop(styledText), style)...)
+				style := readColoributes(chop(styleItems), defaultStyle)
+				cells = append(cells, RunesToStyledCells(chop(styledText), style)...)
 				reset()
 			} else if len(runes) == i+1 {
 				rollback()
@@ -165,65 +155,4 @@ func ParseText(s string, defaultStyle Style) []Cell {
 	}
 
 	return cells
-}
-
-func WrapText(cs []Cell, wl int) []Cell {
-	tmpCell := make([]Cell, len(cs))
-	copy(tmpCell, cs)
-
-	// get the plaintext
-	plain := CellsToString(cs)
-
-	// wrap
-	plainWrapped := wordwrap.WrapString(plain, uint(wl))
-
-	// find differences and insert
-	finalCell := tmpCell // finalcell will get the inserts and is what is returned
-
-	plainRune := []rune(plain)
-	plainWrappedRune := []rune(plainWrapped)
-	trigger := "go"
-	plainRuneNew := plainRune
-
-	for trigger != "stop" {
-		plainRune = plainRuneNew
-		for i := range plainRune {
-			if plainRune[i] == plainWrappedRune[i] {
-				trigger = "stop"
-			} else if plainRune[i] != plainWrappedRune[i] && plainWrappedRune[i] == 10 {
-				trigger = "go"
-				cell := NewCell(10)
-				j := i - 0
-
-				// insert a cell into the []Cell in correct position
-				tmpCell[i] = cell
-
-				// insert the newline into plain so we avoid indexing errors
-				plainRuneNew = append(plainRune, 10)
-				copy(plainRuneNew[j+1:], plainRuneNew[j:])
-				plainRuneNew[j] = plainWrappedRune[j]
-
-				// restart the inner for loop until plain and plain wrapped are
-				// the same; yeah, it's inefficient, but the text amounts
-				// should be small
-				break
-
-			} else if plainRune[i] != plainWrappedRune[i] &&
-				plainWrappedRune[i-1] == 10 && // if the prior rune is a newline
-				plainRune[i] == 32 { // and this rune is a space
-				trigger = "go"
-				// need to delete plainRune[i] because it gets rid of an extra
-				// space
-				plainRuneNew = append(plainRune[:i], plainRune[i+1:]...)
-				break
-
-			} else {
-				trigger = "stop" // stops the outer for loop
-			}
-		}
-	}
-
-	finalCell = tmpCell
-
-	return finalCell
 }

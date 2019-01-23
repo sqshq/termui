@@ -47,11 +47,11 @@ func (self *Gauge) Draw(buf *Buffer) {
 	labelYCoordinate := self.Inner.Min.Y + ((self.Inner.Dy() - 1) / 2)
 	if labelYCoordinate < self.Inner.Max.Y {
 		for i, char := range label {
-			attrs := NewStyle(self.PercentColor)
+			style := NewStyle(self.PercentColor)
 			if labelXCoordinate+i+1 <= self.Inner.Min.X+barWidth {
-				attrs = NewStyle(self.BarColor, ColorClear, ModifierReverse)
+				style = NewStyle(self.BarColor, ColorClear, ModifierReverse)
 			}
-			buf.SetCell(NewCell(char, attrs), image.Pt(labelXCoordinate+i, labelYCoordinate))
+			buf.SetCell(NewCell(char, style), image.Pt(labelXCoordinate+i, labelYCoordinate))
 		}
 	}
 }

@@ -27,7 +27,7 @@ func (self *Paragraph) Draw(buf *Buffer) {
 	self.Block.Draw(buf)
 
 	point := self.Inner.Min
-	cells := WrapText(ParseText(self.Text, self.TextStyle), self.Inner.Dx())
+	cells := WrapCells(ParseText(self.Text, self.TextStyle), uint(self.Inner.Dx()))
 
 	for i := 0; i < len(cells) && point.Y < self.Inner.Max.Y; i++ {
 		if cells[i].Rune == '\n' {

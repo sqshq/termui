@@ -44,13 +44,13 @@ func (self *TabPane) Draw(buf *Buffer) {
 
 	xCoordinate := self.Inner.Min.X
 	for i, name := range self.TabNames {
-		attrPair := self.InactiveTabStyle
+		ColorPair := self.InactiveTabStyle
 		if i == self.ActiveTabIndex {
-			attrPair = self.ActiveTabStyle
+			ColorPair = self.ActiveTabStyle
 		}
 		buf.SetString(
 			TrimString(name, self.Inner.Max.X-xCoordinate),
-			attrPair,
+			ColorPair,
 			image.Pt(xCoordinate, self.Inner.Min.Y),
 		)
 

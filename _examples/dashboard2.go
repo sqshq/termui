@@ -283,7 +283,7 @@ func main() {
 	header.Text = "Press q to quit, Press h or l to switch tabs"
 	header.SetRect(0, 0, 50, 1)
 	header.Border = false
-	header.TextAttrs.Bg = ui.ColorBlue
+	header.TextStyle.Bg = ui.ColorBlue
 
 	cs, errcs := getCpusStatsMap()
 	cpusStats := NewCpusStats(cs)

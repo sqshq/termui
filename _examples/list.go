@@ -23,15 +23,15 @@ func main() {
 	l.Title = "List"
 	l.Rows = []string{
 		"[0] github.com/gizak/termui",
-		"[1] [你好，世界](fg-blue)",
+		"[1] [你好，世界](fg:blue)",
 		"[2] [こんにちは世界](fg:red)",
-		"[3] [color output](fg:white,bg:green)",
+		"[3] c[olor outpu](fg:white,bg:green)t",
 		"[4] output.go",
 		"[5] random_out.go",
 		"[6] dashboard.go",
 		"[7] nsf/termbox-go",
 	}
-	l.TextAttrs = ui.AttrPair{ui.ColorYellow, ui.ColorDefault}
+	l.TextStyle = ui.NewStyle(ui.ColorYellow)
 	l.Wrap = false
 	l.SetRect(0, 0, 25, 50)
 

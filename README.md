@@ -17,7 +17,7 @@ The core components of termui include:
 Installing from the master branch is recommended:
 
 ```bash
-go get -u github.com/gizak/termui@master
+go get -u github.com/sqshq/termui@master
 ```
 
 **Note**: termui is currently undergoing API changes so make sure to check the changelog when upgrading.
@@ -42,7 +42,7 @@ Run an example with `go run _examples/{example}.go` or run all of them consecuti
 
 ## Documentation
 
-- [wiki](https://github.com/gizak/termui/wiki)
+- [wiki](https://github.com/sqshq/termui/wiki)
 
 ## Uses
 

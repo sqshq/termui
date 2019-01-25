@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"image"
 
-	. "github.com/gizak/termui"
+	. "github.com/sqshq/termui"
 )
 
 type Gauge struct {

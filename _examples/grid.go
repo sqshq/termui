@@ -11,8 +11,8 @@ import (
 	"math"
 	"time"
 
-	ui "github.com/gizak/termui"
-	"github.com/gizak/termui/widgets"
+	ui "github.com/sqshq/termui"
+	"github.com/sqshq/termui/widgets"
 )
 
 func main() {
@@ -63,7 +63,7 @@ func main() {
 		"",
 		"[3] Uploading File 3",
 	}
-    ls.Border = false
+	ls.Border = false
 
 	p := widgets.NewParagraph()
 	p.Text = "<> This row has 3 columns\n<- Widgets can be stacked up like left side\n<- Stacked widgets are treated as a single widget"

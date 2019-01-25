@@ -1,4 +1,4 @@
-module github.com/gizak/termui
+module github.com/sqshq/termui
 
 require (
 	github.com/google/pprof v0.0.0-20190109223431-e84dfd68c163 // indirect

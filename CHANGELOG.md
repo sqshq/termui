@@ -16,7 +16,7 @@ Non breaking changes:
 
 Breaking changes:
 
-- moved widgets to `github.com/gizak/termui/widgets`
+- moved widgets to `github.com/sqshq/termui/widgets`
 - rewrote widgets (check examples and code)
 - rewrote grid
   - grids are instantiated locally instead of through `termui.Body`

@@ -7,7 +7,7 @@ package widgets
 import (
 	"image"
 
-	. "github.com/gizak/termui"
+	. "github.com/sqshq/termui"
 )
 
 type Paragraph struct {
